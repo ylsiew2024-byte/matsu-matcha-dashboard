@@ -121,3 +121,11 @@
 
 ### Final Security Rule
 - [x] Block/warn features that risk data leakage or unauthorized access
+
+## Sample Data
+- [x] Add sample suppliers (Japanese matcha farms)
+- [x] Add sample matcha SKUs with grades
+- [x] Add sample B2B clients (cafes, restaurants)
+- [x] Add sample inventory data
+- [x] Add sample pricing with margins
+- [x] Add sample orders
