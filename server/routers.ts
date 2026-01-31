@@ -714,7 +714,10 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Version not found' });
         }
         
-        const data = JSON.parse(targetVersion.data as string);
+        const rawData = JSON.parse(targetVersion.data as string);
+        
+        // Clean data: remove fields that shouldn't be updated and handle Date conversion
+        const { id, createdAt, updatedAt, createdBy, updatedBy, ...data } = rawData;
         
         // Restore based on entity type
         switch (input.entityType) {

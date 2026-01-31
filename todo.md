@@ -253,3 +253,11 @@
 - [x] Add "Create Order" button/dialog to Orders page (already existed)
 - [x] Allow users to create new client orders (already existed)
 - [x] Generate sample orders data for clients (14 orders with various statuses)
+
+
+## Bug Fixes & UI Updates (Jan 31 - Batch 3)
+- [x] Delete AI Predictions page from sidebar navigation (already done)
+- [x] Analytics page: Keep line graph for revenue trend
+- [x] Analytics page: Remove supplier distribution chart
+- [x] Analytics page: Remove average margin display
+- [x] Fix product revert function error: "value.toISOString is not a function"
