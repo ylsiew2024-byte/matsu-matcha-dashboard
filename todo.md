@@ -212,3 +212,25 @@
 - [x] Warning: Missed reorder windows
 - [x] Version control for all edits
 - [x] Audit trail for data changes
+
+## UI Changes (Jan 31) - Completed
+- [x] Delete AI Assistant page from navigation and routes
+- [x] Add comprehensive profit calculator to Pricing Management page
+  - [x] Cost price in JPY
+  - [x] Shipping fee ($15/kg)
+  - [x] Currency exchange rate (JPY→SGD)
+  - [x] 9% import tax calculation
+  - [x] Total cost price per kg
+  - [x] Selling price per kg
+  - [x] Special client discount
+  - [x] Profit per kg
+  - [x] Monthly purchase quantity (kg)
+  - [x] Total monthly profit from client
+  - [x] Existing inventory in stock (kg)
+  - [x] Last order date
+  - [x] Last stock arrival date
+  - [x] Days to next order
+  - [x] Quantity required to fulfill (kg)
+  - [x] Next delivery date for client
+  - [x] AI recommendation for higher profitability matcha swaps (same/better quality)
+- [x] Add revert button for each product to restore previous versions

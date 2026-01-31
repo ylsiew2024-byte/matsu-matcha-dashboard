@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -24,9 +25,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Package, Star, Leaf, Search } from "lucide-react";
+import { 
+  Plus, Pencil, Trash2, Package, Star, Leaf, Search, 
+  History, RotateCcw, Clock, User, ChevronRight, AlertCircle
+} from "lucide-react";
+import { format } from "date-fns";
 
 const gradeColors: Record<string, string> = {
   ceremonial: "bg-amber-500/10 text-amber-600 border-amber-500/20",
@@ -35,17 +49,35 @@ const gradeColors: Record<string, string> = {
   food_grade: "bg-slate-500/10 text-slate-600 border-slate-500/20",
 };
 
+interface VersionData {
+  name?: string;
+  grade?: string;
+  qualityTier?: number;
+  isSeasonal?: boolean;
+  harvestSeason?: string;
+  description?: string;
+  supplierId?: number;
+}
+
 export default function Products() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
   const canEdit = user?.role === 'super_admin' || user?.role === 'manager';
+  const canRevert = user?.role === 'super_admin';
   
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingSku, setEditingSku] = useState<any>(null);
+  const [selectedSkuForHistory, setSelectedSkuForHistory] = useState<any>(null);
   
   const { data: skus, isLoading } = trpc.skus.list.useQuery({});
   const { data: suppliers } = trpc.suppliers.list.useQuery({});
+  
+  // Version history query - only when a SKU is selected
+  const { data: versionHistory, isLoading: isLoadingVersions } = trpc.versions.list.useQuery(
+    { entityType: 'sku', entityId: selectedSkuForHistory?.id || 0 },
+    { enabled: !!selectedSkuForHistory }
+  );
   
   const createMutation = trpc.skus.create.useMutation({
     onSuccess: () => {
@@ -54,7 +86,7 @@ export default function Products() {
       setIsCreateOpen(false);
       toast.success("Product created successfully");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message);
     },
   });
@@ -65,7 +97,7 @@ export default function Products() {
       setEditingSku(null);
       toast.success("Product updated successfully");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message);
     },
   });
@@ -75,7 +107,18 @@ export default function Products() {
       utils.skus.list.invalidate();
       toast.success("Product deactivated");
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      toast.error(error.message);
+    },
+  });
+
+  const rollbackMutation = trpc.versions.rollback.useMutation({
+    onSuccess: () => {
+      utils.skus.list.invalidate();
+      utils.versions.list.invalidate();
+      toast.success("Product reverted to previous version");
+    },
+    onError: (error: any) => {
       toast.error(error.message);
     },
   });
@@ -118,6 +161,18 @@ export default function Products() {
     });
   };
 
+  const handleRevert = (versionNumber: number) => {
+    if (!selectedSkuForHistory) return;
+    
+    if (confirm(`Are you sure you want to revert to version ${versionNumber}? This will restore the product to its previous state.`)) {
+      rollbackMutation.mutate({
+        entityType: 'sku',
+        entityId: selectedSkuForHistory.id,
+        versionNumber,
+      });
+    }
+  };
+
   const renderQualityStars = (tier: number) => {
     return (
       <div className="flex gap-0.5">
@@ -129,6 +184,14 @@ export default function Products() {
         ))}
       </div>
     );
+  };
+
+  const parseVersionData = (dataString: string): VersionData => {
+    try {
+      return JSON.parse(dataString);
+    } catch {
+      return {};
+    }
   };
 
   return (
@@ -326,31 +389,163 @@ export default function Products() {
                   </p>
                 )}
                 
-                {canEdit && (
-                  <div className="flex gap-2 pt-3 border-t">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => setEditingSku(sku)}
-                    >
-                      <Pencil className="h-3 w-3 mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-destructive hover:text-destructive"
-                      onClick={() => {
-                        if (confirm("Are you sure you want to deactivate this product?")) {
-                          deleteMutation.mutate({ id: sku.id });
-                        }
-                      }}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                )}
+                {/* Action Buttons */}
+                <div className="flex gap-2 pt-3 border-t">
+                  {/* Version History Button - Always visible */}
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1"
+                        onClick={() => setSelectedSkuForHistory(sku)}
+                      >
+                        <History className="h-3 w-3" />
+                        History
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent className="w-[400px] sm:w-[540px]">
+                      <SheetHeader>
+                        <SheetTitle className="flex items-center gap-2">
+                          <History className="h-5 w-5" />
+                          Version History
+                        </SheetTitle>
+                        <SheetDescription>
+                          {selectedSkuForHistory?.name} - View and revert to previous versions
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="mt-6">
+                        {isLoadingVersions ? (
+                          <div className="space-y-4">
+                            {[1, 2, 3].map(i => (
+                              <Skeleton key={i} className="h-24 w-full" />
+                            ))}
+                          </div>
+                        ) : !versionHistory || versionHistory.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-12 text-center">
+                            <AlertCircle className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                            <h3 className="text-lg font-medium">No version history</h3>
+                            <p className="text-muted-foreground text-sm mt-1">
+                              Changes to this product will be tracked here
+                            </p>
+                          </div>
+                        ) : (
+                          <ScrollArea className="h-[calc(100vh-200px)]">
+                            <div className="space-y-4 pr-4">
+                              {versionHistory.map((version: any, index: number) => {
+                                const data = parseVersionData(version.data);
+                                const isLatest = index === 0;
+                                
+                                return (
+                                  <Card key={version.id} className={`${isLatest ? 'border-primary/50 bg-primary/5' : ''}`}>
+                                    <CardContent className="pt-4">
+                                      <div className="flex items-start justify-between">
+                                        <div className="space-y-1">
+                                          <div className="flex items-center gap-2">
+                                            <Badge variant={isLatest ? "default" : "outline"} className="text-xs">
+                                              v{version.versionNumber}
+                                            </Badge>
+                                            {isLatest && (
+                                              <Badge variant="secondary" className="text-xs">
+                                                Current
+                                              </Badge>
+                                            )}
+                                          </div>
+                                          <p className="text-sm font-medium">
+                                            {version.changeDescription || 'No description'}
+                                          </p>
+                                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                            <span className="flex items-center gap-1">
+                                              <User className="h-3 w-3" />
+                                              {version.createdByName || 'Unknown'}
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                              <Clock className="h-3 w-3" />
+                                              {version.createdAt ? format(new Date(version.createdAt), 'MMM d, yyyy HH:mm') : 'Unknown'}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        
+                                        {/* Revert Button - Only for non-current versions and admins */}
+                                        {!isLatest && canRevert && (
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="gap-1 text-primary hover:text-primary"
+                                            onClick={() => handleRevert(version.versionNumber)}
+                                            disabled={rollbackMutation.isPending}
+                                          >
+                                            <RotateCcw className="h-3 w-3" />
+                                            Revert
+                                          </Button>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Version Data Preview */}
+                                      <Separator className="my-3" />
+                                      <div className="grid grid-cols-2 gap-2 text-xs">
+                                        {data.name && (
+                                          <div>
+                                            <span className="text-muted-foreground">Name:</span>
+                                            <span className="ml-1">{data.name}</span>
+                                          </div>
+                                        )}
+                                        {data.grade && (
+                                          <div>
+                                            <span className="text-muted-foreground">Grade:</span>
+                                            <span className="ml-1 capitalize">{data.grade.replace('_', ' ')}</span>
+                                          </div>
+                                        )}
+                                        {data.qualityTier && (
+                                          <div>
+                                            <span className="text-muted-foreground">Quality:</span>
+                                            <span className="ml-1">{data.qualityTier}/5</span>
+                                          </div>
+                                        )}
+                                        {data.harvestSeason && (
+                                          <div>
+                                            <span className="text-muted-foreground">Season:</span>
+                                            <span className="ml-1 capitalize">{data.harvestSeason}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                );
+                              })}
+                            </div>
+                          </ScrollArea>
+                        )}
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                  
+                  {canEdit && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => setEditingSku(sku)}
+                      >
+                        <Pencil className="h-3 w-3 mr-1" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => {
+                          if (confirm("Are you sure you want to deactivate this product?")) {
+                            deleteMutation.mutate({ id: sku.id });
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}

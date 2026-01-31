@@ -33,7 +33,7 @@ import {
   Truck, 
   DollarSign,
   BarChart3,
-  MessageSquare,
+  // MessageSquare removed - AI Assistant deleted
   Bell,
   Settings,
   Shield,
@@ -60,7 +60,7 @@ const menuItems = [
   { icon: Package, label: "Inventory", path: "/inventory" },
   { icon: TrendingUp, label: "Orders", path: "/orders" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
-  { icon: MessageSquare, label: "AI Assistant", path: "/ai-chat" },
+  // AI Assistant removed per user request
   { icon: History, label: "Audit Log", path: "/audit" },
   { icon: Brain, label: "AI Predictions", path: "/ai-predictions" },
   { icon: UserCog, label: "User Management", path: "/users" },

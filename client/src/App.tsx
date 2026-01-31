@@ -20,7 +20,7 @@ import Pricing from "./pages/Pricing";
 import Inventory from "./pages/Inventory";
 import Orders from "./pages/Orders";
 import Analytics from "./pages/Analytics";
-import AiChat from "./pages/AiChat";
+// AI Chat removed per user request
 import AuditLog from "./pages/AuditLog";
 import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
@@ -40,7 +40,7 @@ function Router() {
         <Route path="/inventory" component={Inventory} />
         <Route path="/orders" component={Orders} />
         <Route path="/analytics" component={Analytics} />
-        <Route path="/ai-chat" component={AiChat} />
+        {/* AI Chat removed per user request */}
         <Route path="/audit" component={AuditLog} />
         <Route path="/settings" component={Settings} />
         <Route path="/notifications" component={Notifications} />
