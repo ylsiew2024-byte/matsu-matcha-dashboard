@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Users, Building2, Mail, Phone, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, Building2, Mail, Phone, Search, Sparkles, Bot } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
 
 export default function Clients() {
   const { user } = useAuth();
@@ -328,6 +329,9 @@ export default function Clients() {
         </div>
       )}
 
+      {/* AI Insights Card */}
+      <AIInsightsCard clients={filteredClients || []} />
+
       {/* Edit Dialog */}
       <Dialog open={!!editingClient} onOpenChange={(open) => !open && setEditingClient(null)}>
         <DialogContent className="max-w-2xl">
@@ -418,6 +422,75 @@ export default function Clients() {
           )}
         </DialogContent>
       </Dialog>
+      {/* AI Assistant */}
+      <AIAssistant 
+        context="clients" 
+        contextData={filteredClients}
+        suggestedQuestions={[
+          "Which clients have the highest profit potential?",
+          "Suggest pricing strategies for my top clients",
+          "Identify clients who might benefit from premium products",
+          "What products should I recommend to each client?",
+        ]}
+      />
     </div>
+  );
+}
+
+// AI Insights Card Component
+function AIInsightsCard({ clients }: { clients: any[] }) {
+  const [insights, setInsights] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getInsights = trpc.ai.bulkRecommendations.useMutation({
+    onSuccess: (data) => {
+      setInsights(data.recommendations);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
+
+  const handleGetInsights = () => {
+    setIsLoading(true);
+    getInsights.mutate({ type: 'client_upsell' });
+  };
+
+  if (clients.length === 0) return null;
+
+  return (
+    <Card className="card-elegant border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <Bot className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-base">AI Client Insights</CardTitle>
+              <CardDescription>Get AI-powered recommendations for your clients</CardDescription>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGetInsights}
+            disabled={isLoading}
+            className="gap-1"
+          >
+            <Sparkles className="h-3 w-3" />
+            {isLoading ? "Analyzing..." : "Get Insights"}
+          </Button>
+        </div>
+      </CardHeader>
+      {insights && (
+        <CardContent className="pt-0">
+          <div className="prose prose-sm dark:prose-invert max-w-none bg-muted/50 rounded-lg p-4 max-h-64 overflow-y-auto">
+            <pre className="whitespace-pre-wrap text-xs">{insights}</pre>
+          </div>
+        </CardContent>
+      )}
+    </Card>
   );
 }

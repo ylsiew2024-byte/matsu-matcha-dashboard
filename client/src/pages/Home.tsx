@@ -13,8 +13,14 @@ import {
   TrendingDown,
   AlertTriangle,
   ArrowRight,
-  BarChart3
+  BarChart3,
+  Sparkles,
+  Zap,
+  Bot
 } from "lucide-react";
+import { AISmartDashboard } from "@/components/AISmartDashboard";
+import { AICommandCenter } from "@/components/AICommandCenter";
+import { AIWorkflowAutomation } from "@/components/AIWorkflowAutomation";
 import { useLocation } from "wouter";
 
 export default function Home() {
@@ -47,10 +53,16 @@ export default function Home() {
             Here's an overview of your matcha trading operations
           </p>
         </div>
-        <Badge variant="outline" className="w-fit capitalize">
-          {user?.role?.replace('_', ' ')} Access
-        </Badge>
+        <div className="flex items-center gap-2">
+          <AIWorkflowAutomation />
+          <Badge variant="outline" className="w-fit capitalize">
+            {user?.role?.replace('_', ' ')} Access
+          </Badge>
+        </div>
       </div>
+
+      {/* AI Smart Dashboard */}
+      <AISmartDashboard />
 
       {/* Alert Banner */}
       {(lowStock?.length || 0) > 0 && (
@@ -327,6 +339,8 @@ export default function Home() {
           </CardContent>
         </Card>
       )}
+      {/* AI Command Center - Floating Button */}
+      <AICommandCenter />
     </div>
   );
 }

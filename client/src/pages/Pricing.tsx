@@ -49,8 +49,9 @@ import { toast } from "sonner";
 import { 
   Plus, DollarSign, Calculator, TrendingUp, TrendingDown, Info, Lock, 
   Sparkles, AlertTriangle, Calendar, Package, ArrowRight, RefreshCw,
-  Lightbulb, CheckCircle2, XCircle
+  Lightbulb, CheckCircle2, XCircle, Bot
 } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
 import { useSecurity } from "@/contexts/SecurityContext";
 import {
   Tooltip,
@@ -1165,6 +1166,18 @@ export default function Pricing() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* AI Assistant */}
+      <AIAssistant 
+        context="pricing" 
+        contextData={pricing}
+        suggestedQuestions={[
+          "What if I increase prices by 10%?",
+          "Calculate optimal margins for each product",
+          "Compare my pricing to market rates",
+          "Suggest discount strategies for bulk orders",
+        ]}
+      />
     </div>
   );
 }

@@ -49,6 +49,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import { SecurityToolbar, SecurityToolbarCompact } from "./SecurityToolbar";
+import { AIPredictiveAlerts } from "./AIPredictiveAlerts";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -367,6 +368,9 @@ function DashboardLayoutContent({
               <Shield className="w-3 h-3" />
               <span>CONFIDENTIAL</span>
             </div>
+            
+            {/* AI Predictive Alerts */}
+            <AIPredictiveAlerts />
             
             {/* Notifications */}
             <Button

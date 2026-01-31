@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown } from "lucide-react";
+import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown, Sparkles, Bot } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
 
 export default function Inventory() {
   const { user } = useAuth();
@@ -423,6 +424,81 @@ export default function Inventory() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* AI Insights Card */}
+      <AIInsightsCard inventory={inventory || []} lowStock={lowStock || []} />
+
+      {/* AI Assistant */}
+      <AIAssistant 
+        context="inventory" 
+        contextData={{ inventory, lowStock }}
+        suggestedQuestions={[
+          "Which items need to be reordered soon?",
+          "Forecast inventory levels for next 3 months",
+          "Identify slow-moving inventory",
+          "Suggest optimal stock levels per SKU",
+        ]}
+      />
     </div>
+  );
+}
+
+// AI Insights Card Component
+function AIInsightsCard({ inventory, lowStock }: { inventory: any[]; lowStock: any[] }) {
+  const [insights, setInsights] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getInsights = trpc.ai.bulkRecommendations.useMutation({
+    onSuccess: (data) => {
+      setInsights(data.recommendations);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
+
+  const handleGetInsights = () => {
+    setIsLoading(true);
+    getInsights.mutate({ type: 'inventory_reorder' });
+  };
+
+  return (
+    <Card className="card-elegant border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <Bot className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-base">AI Inventory Insights</CardTitle>
+              <CardDescription>
+                {lowStock.length > 0 
+                  ? `${lowStock.length} items need attention` 
+                  : "Get AI-powered reorder recommendations"}
+              </CardDescription>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGetInsights}
+            disabled={isLoading}
+            className="gap-1"
+          >
+            <Sparkles className="h-3 w-3" />
+            {isLoading ? "Analyzing..." : "Get Insights"}
+          </Button>
+        </div>
+      </CardHeader>
+      {insights && (
+        <CardContent className="pt-0">
+          <div className="prose prose-sm dark:prose-invert max-w-none bg-muted/50 rounded-lg p-4 max-h-64 overflow-y-auto">
+            <pre className="whitespace-pre-wrap text-xs">{insights}</pre>
+          </div>
+        </CardContent>
+      )}
+    </Card>
   );
 }

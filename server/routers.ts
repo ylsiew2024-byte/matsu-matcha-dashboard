@@ -925,6 +925,230 @@ Provide helpful, data-driven insights. When discussing pricing scenarios, show c
           recommendations: response.choices[0]?.message?.content || 'Unable to generate recommendations.',
         };
       }),
+
+    // Context-aware chat for specific pages
+    contextChat: protectedProcedure
+      .input(z.object({
+        message: z.string().min(1),
+        sessionId: z.string(),
+        context: z.enum(['clients', 'suppliers', 'products', 'pricing', 'inventory', 'orders', 'analytics', 'general']),
+        contextData: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { message, sessionId, context, contextData } = input;
+        const userRole = ctx.user.role;
+        
+        // Get business context
+        const businessContext = await db.getBusinessContext();
+        
+        // Get chat history for this session
+        const history = await db.getAiChatHistory(sessionId, 10);
+        
+        // Save user message
+        await db.createAiChatMessage({
+          userId: ctx.user.id,
+          sessionId,
+          role: 'user',
+          content: message,
+        });
+        
+        // Build context-specific system prompt
+        const contextPrompts: Record<string, string> = {
+          clients: `You are an AI assistant specialized in B2B client management for Matsu Matcha. Help analyze client relationships, suggest pricing strategies, identify growth opportunities, and recommend retention strategies. Focus on client-specific insights.`,
+          suppliers: `You are an AI assistant specialized in supplier management for Matsu Matcha. Help evaluate suppliers, compare costs and quality, analyze lead times, and suggest optimal ordering strategies. Focus on supplier performance and relationships.`,
+          products: `You are an AI assistant specialized in product management for Matsu Matcha. Help analyze product performance, suggest pricing adjustments, identify best-sellers and slow movers, and recommend inventory levels. Focus on matcha product insights.`,
+          pricing: `You are an AI assistant specialized in pricing strategy for Matsu Matcha. Help optimize pricing, calculate margins, analyze profitability scenarios, and suggest competitive pricing. Provide specific calculations and what-if analyses.`,
+          inventory: `You are an AI assistant specialized in inventory management for Matsu Matcha. Help forecast demand, identify low stock items, suggest reorder quantities and timing, and optimize inventory levels. Focus on supply chain efficiency.`,
+          orders: `You are an AI assistant specialized in order management for Matsu Matcha. Help analyze order patterns, identify trends, suggest fulfillment optimizations, and forecast future orders. Focus on order processing efficiency.`,
+          analytics: `You are an AI assistant specialized in business analytics for Matsu Matcha. Help understand business metrics, identify trends, create insights, and provide actionable recommendations. Focus on data-driven decision making.`,
+          general: `You are an AI assistant for Matsu Matcha, a B2B matcha distribution company. Help with any business questions, provide insights, and offer recommendations to improve operations.`,
+        };
+        
+        const systemPrompt = `${contextPrompts[context] || contextPrompts.general}
+
+Current Business Context:
+- Total Suppliers: ${businessContext?.suppliers?.length || 0}
+- Total Clients: ${businessContext?.clients?.length || 0}
+- Total Products: ${businessContext?.skus?.length || 0}
+- User: ${ctx.user.name} (${userRole})
+
+${contextData ? `Page-specific data: ${contextData}` : ''}
+
+Business Data Summary:
+${JSON.stringify({
+  suppliers: businessContext?.suppliers?.slice(0, 3),
+  clients: businessContext?.clients?.slice(0, 3),
+  skus: businessContext?.skus?.slice(0, 3),
+  pricing: businessContext?.pricing?.slice(0, 3),
+  inventory: businessContext?.inventory?.slice(0, 3),
+}, null, 2)}
+
+Provide helpful, concise, and actionable responses. Use specific numbers and data when available. Format responses with markdown for readability.`;
+        
+        const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+          { role: 'system', content: systemPrompt },
+          ...history.map(h => ({
+            role: h.role as 'user' | 'assistant',
+            content: h.content,
+          })),
+          { role: 'user', content: message },
+        ];
+        
+        try {
+          const response = await invokeLLM({ messages });
+          const rawContent = response.choices[0]?.message?.content;
+          const assistantMessage = typeof rawContent === 'string' ? rawContent : 'I apologize, but I was unable to generate a response.';
+          
+          // Save assistant response
+          await db.createAiChatMessage({
+            userId: ctx.user.id,
+            sessionId,
+            role: 'assistant',
+            content: assistantMessage,
+          });
+          
+          return {
+            sessionId,
+            response: assistantMessage,
+          };
+        } catch (error) {
+          console.error('AI context chat error:', error);
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to generate AI response' });
+        }
+      }),
+
+    // Query for context chat history
+    contextChatHistory: protectedProcedure
+      .input(z.object({ sessionId: z.string(), context: z.string() }))
+      .query(async ({ input }) => {
+        return db.getAiChatHistory(input.sessionId);
+      }),
+
+    // Quick suggestion for inline AI help
+    quickSuggestion: protectedProcedure
+      .input(z.object({
+        context: z.enum(['clients', 'suppliers', 'products', 'pricing', 'inventory', 'orders', 'analytics', 'general']),
+        prompt: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { context, prompt } = input;
+        
+        const systemPrompt = `You are a helpful AI assistant for Matsu Matcha. Provide a brief, actionable suggestion (2-3 sentences max) based on the context: ${context}. Be specific and practical.`;
+        
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompt },
+            ],
+          });
+          
+          const rawContent = response.choices[0]?.message?.content;
+          return {
+            suggestion: typeof rawContent === 'string' ? rawContent : 'Unable to generate suggestion.',
+          };
+        } catch (error) {
+          console.error('Quick suggestion error:', error);
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to generate suggestion' });
+        }
+      }),
+
+    // AI-powered data analysis for any entity
+    analyzeEntity: protectedProcedure
+      .input(z.object({
+        entityType: z.enum(['client', 'supplier', 'product', 'order']),
+        entityId: z.number(),
+        analysisType: z.enum(['performance', 'recommendations', 'forecast', 'comparison']),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { entityType, entityId, analysisType } = input;
+        const businessContext = await db.getBusinessContext();
+        
+        let entityData: any = null;
+        let prompt = '';
+        
+        switch (entityType) {
+          case 'client':
+            entityData = await db.getClientById(entityId);
+            const clientOrders = businessContext?.recentOrders?.filter((o: any) => o.clientId === entityId) || [];
+            prompt = `Analyze this client and provide ${analysisType} insights:\n\nClient: ${JSON.stringify(entityData)}\nRecent Orders: ${JSON.stringify(clientOrders)}\nAll Clients for comparison: ${JSON.stringify(businessContext?.clients?.slice(0, 5))}`;
+            break;
+          case 'supplier':
+            entityData = await db.getSupplierById(entityId);
+            const supplierSkus = businessContext?.skus?.filter((s: any) => s.supplierId === entityId) || [];
+            prompt = `Analyze this supplier and provide ${analysisType} insights:\n\nSupplier: ${JSON.stringify(entityData)}\nProducts from this supplier: ${JSON.stringify(supplierSkus)}\nAll Suppliers for comparison: ${JSON.stringify(businessContext?.suppliers?.slice(0, 5))}`;
+            break;
+          case 'product':
+            entityData = await db.getMatchaSkuById(entityId);
+            const productPricing = businessContext?.pricing?.filter((p: any) => p.skuId === entityId) || [];
+            const productInventory = businessContext?.inventory?.filter((i: any) => i.skuId === entityId) || [];
+            prompt = `Analyze this product and provide ${analysisType} insights:\n\nProduct: ${JSON.stringify(entityData)}\nPricing: ${JSON.stringify(productPricing)}\nInventory: ${JSON.stringify(productInventory)}\nAll Products for comparison: ${JSON.stringify(businessContext?.skus?.slice(0, 5))}`;
+            break;
+          case 'order':
+            const order = businessContext?.recentOrders?.find((o: any) => o.id === entityId);
+            prompt = `Analyze this order and provide ${analysisType} insights:\n\nOrder: ${JSON.stringify(order)}\nRecent Orders for comparison: ${JSON.stringify(businessContext?.recentOrders?.slice(0, 5))}`;
+            break;
+        }
+        
+        const systemPrompt = `You are a business analyst AI for Matsu Matcha. Provide detailed ${analysisType} analysis with specific numbers, percentages, and actionable recommendations. Format your response with clear sections using markdown.`;
+        
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompt },
+            ],
+          });
+          
+          const rawContent = response.choices[0]?.message?.content;
+          return {
+            entityType,
+            entityId,
+            analysisType,
+            analysis: typeof rawContent === 'string' ? rawContent : 'Unable to generate analysis.',
+          };
+        } catch (error) {
+          console.error('Entity analysis error:', error);
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to generate analysis' });
+        }
+      }),
+
+    // AI-powered bulk recommendations
+    bulkRecommendations: protectedProcedure
+      .input(z.object({
+        type: z.enum(['pricing_optimization', 'inventory_reorder', 'client_upsell', 'supplier_consolidation']),
+      }))
+      .mutation(async ({ input }) => {
+        const { type } = input;
+        const businessContext = await db.getBusinessContext();
+        
+        const prompts: Record<string, string> = {
+          pricing_optimization: `Analyze all products and suggest pricing optimizations to improve margins. For each product, provide: current price, suggested price, expected margin improvement, and reasoning.\n\nProducts: ${JSON.stringify(businessContext?.skus)}\nPricing: ${JSON.stringify(businessContext?.pricing)}`,
+          inventory_reorder: `Analyze inventory levels and suggest reorder quantities and timing for each product. Consider lead times, current stock, and demand patterns.\n\nInventory: ${JSON.stringify(businessContext?.inventory)}\nProducts: ${JSON.stringify(businessContext?.skus)}\nSuppliers: ${JSON.stringify(businessContext?.suppliers)}`,
+          client_upsell: `Analyze each client's purchase history and suggest upsell opportunities. Recommend higher-margin or premium products that match their preferences.\n\nClients: ${JSON.stringify(businessContext?.clients)}\nOrders: ${JSON.stringify(businessContext?.recentOrders)}\nProducts: ${JSON.stringify(businessContext?.skus)}`,
+          supplier_consolidation: `Analyze supplier relationships and suggest consolidation opportunities to reduce costs and improve efficiency.\n\nSuppliers: ${JSON.stringify(businessContext?.suppliers)}\nProducts by supplier: ${JSON.stringify(businessContext?.skus)}`,
+        };
+        
+        const systemPrompt = `You are a strategic business analyst AI for Matsu Matcha. Provide comprehensive recommendations in a structured format with specific numbers and actionable steps. Use markdown tables where appropriate.`;
+        
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompts[type] },
+            ],
+          });
+          
+          const rawContent = response.choices[0]?.message?.content;
+          return {
+            type,
+            recommendations: typeof rawContent === 'string' ? rawContent : 'Unable to generate recommendations.',
+          };
+        } catch (error) {
+          console.error('Bulk recommendations error:', error);
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to generate recommendations' });
+        }
+      }),
   }),
 
   // Client-Product Relations (Canonical Data Layer)

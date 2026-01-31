@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, TrendingUp, Package, Clock, CheckCircle2, XCircle, Search } from "lucide-react";
+import { Plus, TrendingUp, Package, Clock, CheckCircle2, XCircle, Search, Sparkles, Bot } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
@@ -382,6 +383,18 @@ export default function Orders() {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Assistant */}
+      <AIAssistant 
+        context="orders" 
+        contextData={filteredOrders}
+        suggestedQuestions={[
+          "Analyze order patterns by client",
+          "Predict next month's order volume",
+          "Identify peak ordering periods",
+          "Suggest order fulfillment optimizations",
+        ]}
+      />
     </div>
   );
 }

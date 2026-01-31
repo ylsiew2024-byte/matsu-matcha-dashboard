@@ -38,8 +38,9 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { 
   Plus, Pencil, Trash2, Package, Star, Leaf, Search, 
-  History, RotateCcw, Clock, User, ChevronRight, AlertCircle
+  History, RotateCcw, Clock, User, ChevronRight, AlertCircle, Sparkles, Bot
 } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
 import { format } from "date-fns";
 
 const gradeColors: Record<string, string> = {
@@ -653,6 +654,79 @@ export default function Products() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* AI Insights Card */}
+      <AIInsightsCard products={filteredSkus || []} />
+
+      {/* AI Assistant */}
+      <AIAssistant 
+        context="products" 
+        contextData={filteredSkus}
+        suggestedQuestions={[
+          "Which products have the best margins?",
+          "Suggest products to discontinue or promote",
+          "Analyze seasonal product trends",
+          "Recommend pricing adjustments for each product",
+        ]}
+      />
     </div>
+  );
+}
+
+// AI Insights Card Component
+function AIInsightsCard({ products }: { products: any[] }) {
+  const [insights, setInsights] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getInsights = trpc.ai.bulkRecommendations.useMutation({
+    onSuccess: (data) => {
+      setInsights(data.recommendations);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
+
+  const handleGetInsights = () => {
+    setIsLoading(true);
+    getInsights.mutate({ type: 'pricing_optimization' });
+  };
+
+  if (products.length === 0) return null;
+
+  return (
+    <Card className="card-elegant border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <Bot className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-base">AI Product Insights</CardTitle>
+              <CardDescription>Get AI-powered product analysis and pricing recommendations</CardDescription>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGetInsights}
+            disabled={isLoading}
+            className="gap-1"
+          >
+            <Sparkles className="h-3 w-3" />
+            {isLoading ? "Analyzing..." : "Get Insights"}
+          </Button>
+        </div>
+      </CardHeader>
+      {insights && (
+        <CardContent className="pt-0">
+          <div className="prose prose-sm dark:prose-invert max-w-none bg-muted/50 rounded-lg p-4 max-h-64 overflow-y-auto">
+            <pre className="whitespace-pre-wrap text-xs">{insights}</pre>
+          </div>
+        </CardContent>
+      )}
+    </Card>
   );
 }

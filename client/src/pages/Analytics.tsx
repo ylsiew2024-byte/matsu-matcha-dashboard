@@ -21,8 +21,11 @@ import {
   Truck,
   AlertTriangle,
   Download,
-  Lock
+  Lock,
+  Sparkles,
+  Bot
 } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
 import { useSecurity } from "@/contexts/SecurityContext";
 import { useSecureExport } from "@/components/ExportConfirmDialog";
 import { Button } from "@/components/ui/button";
@@ -490,6 +493,18 @@ export default function Analytics() {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Assistant */}
+      <AIAssistant 
+        context="analytics" 
+        contextData={{ profitability, clientContrib, forecast, orders }}
+        suggestedQuestions={[
+          "Summarize this month's business performance",
+          "What are my top growth opportunities?",
+          "Compare this quarter to last quarter",
+          "Identify areas for cost reduction",
+        ]}
+      />
     </div>
   );
 }
