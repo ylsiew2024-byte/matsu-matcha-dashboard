@@ -9,7 +9,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import PanicScreen from "./components/PanicScreen";
 import UserWatermark from "./components/UserWatermark";
 import ExportConfirmDialog, { ExportProvider } from "./components/ExportConfirmDialog";
-import SimulationModeBanner from "./components/SimulationModeBanner";
+// SimulationModeBanner removed per user request
 
 // Pages
 import Home from "./pages/Home";
@@ -24,7 +24,7 @@ import Analytics from "./pages/Analytics";
 import AuditLog from "./pages/AuditLog";
 import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
-import AiPredictions from "./pages/AiPredictions";
+// AiPredictions removed per user request
 import UserManagement from "./pages/UserManagement";
 import ClientProductRelations from "./pages/ClientProductRelations";
 
@@ -44,7 +44,7 @@ function Router() {
         <Route path="/audit" component={AuditLog} />
         <Route path="/settings" component={Settings} />
         <Route path="/notifications" component={Notifications} />
-        <Route path="/ai-predictions" component={AiPredictions} />
+        {/* AI Predictions removed per user request */}
         <Route path="/users" component={UserManagement} />
         <Route path="/client-products" component={ClientProductRelations} />
         <Route path="/404" component={NotFound} />
@@ -65,7 +65,7 @@ function App() {
             <PanicScreen />
             <UserWatermark />
             <ExportConfirmDialog />
-            <SimulationModeBanner />
+            {/* SimulationModeBanner removed per user request */}
             
             {/* Main app */}
             <Toaster />

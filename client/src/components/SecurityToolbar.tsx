@@ -12,7 +12,6 @@ import {
   Shield, 
   Clock, 
 } from "lucide-react";
-import { EnterSimulationButton } from "./SimulationModeBanner";
 
 const SESSION_TIMEOUT_MINUTES = 30;
 
@@ -21,7 +20,6 @@ export function SecurityToolbar() {
     activatePanicMode, 
     currentRole,
     lastActivity,
-    isSimulationMode,
   } = useSecurity();
   const { user } = useAuth();
   
@@ -50,9 +48,6 @@ export function SecurityToolbar() {
   
   return (
     <div className="flex items-center gap-2">
-      {/* Simulation mode button */}
-      <EnterSimulationButton />
-      
       {/* Session timer warning */}
       {minutesRemaining <= 5 && minutesRemaining > 0 && (
         <Tooltip>

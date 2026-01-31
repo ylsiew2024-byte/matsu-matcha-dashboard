@@ -1,0 +1,70 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "ai_chat_history"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "audit_logs"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "client_orders"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "client_pricing"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "client_product_relations"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "clients"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "data_versions"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "demand_forecasts"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "exchange_rates"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "inventory"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "inventory_transactions"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "matcha_skus"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "notifications"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "pricing"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "supplier_order_items"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "supplier_orders"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "suppliers"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "system_settings"
+    },
+    {
+      "Tables_in_P6fr6nPkQc7da3BkBBQQhm": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_P6fr6nPkQc7da3BkBBQQhm\n__drizzle_migrations\nai_chat_history\naudit_logs\nclient_orders\nclient_pricing\nclient_product_relations\nclients\ndata_versions\ndemand_forecasts\nexchange_rates\ninventory\ninventory_transactions\nmatcha_skus\nnotifications\npricing\nsupplier_order_items\nsupplier_orders\nsuppliers\nsystem_settings\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 1541
+}

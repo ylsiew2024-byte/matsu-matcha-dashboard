@@ -1,0 +1,38 @@
+{
+  "query": "SELECT name, COUNT(*) as count FROM clients GROUP BY name HAVING COUNT(*) > 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT name, COUNT(*) as count FROM clients GROUP BY name HAVING COUNT(*) > 1;",
+  "rows": [
+    {
+      "name": "The Coffee Bean & Tea Leaf",
+      "count": "3"
+    },
+    {
+      "name": "Artisan Boulangerie",
+      "count": "3"
+    },
+    {
+      "name": "Tsujiri Singapore",
+      "count": "3"
+    },
+    {
+      "name": "Gelato Factory",
+      "count": "3"
+    },
+    {
+      "name": "Matchaya",
+      "count": "3"
+    },
+    {
+      "name": "Nana's Green Tea",
+      "count": "3"
+    },
+    {
+      "name": "Kyo Matcha Bar",
+      "count": "3"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\tcount\nThe Coffee Bean & Tea Leaf\t3\nArtisan Boulangerie\t3\nTsujiri Singapore\t3\nGelato Factory\t3\nMatchaya\t3\nNana's Green Tea\t3\nKyo Matcha Bar\t3\n",
+  "stderr": "",
+  "execution_time_ms": 1524
+}

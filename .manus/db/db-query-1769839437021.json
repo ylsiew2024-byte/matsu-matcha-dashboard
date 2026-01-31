@@ -1,0 +1,65 @@
+{
+  "query": "SELECT id, name, grade FROM matcha_skus ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT id, name, grade FROM matcha_skus ORDER BY id;",
+  "rows": [
+    {
+      "id": "34",
+      "name": "Ume 梅",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "35",
+      "name": "Cho Ro Sui 朝露翠",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "36",
+      "name": "Saemidori Competition Grade さえみどり",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "37",
+      "name": "Honzu Asahi Competition Grade 本簾朝日",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "38",
+      "name": "Suisho 翠初",
+      "grade": "premium"
+    },
+    {
+      "id": "39",
+      "name": "Ryokuun 緑雲",
+      "grade": "premium"
+    },
+    {
+      "id": "40",
+      "name": "Seiha 青波",
+      "grade": "premium"
+    },
+    {
+      "id": "41",
+      "name": "Samidori Kun さみどり薫",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "42",
+      "name": "Najirushi Premium Ceremonial 名印",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "43",
+      "name": "Samidori Competition さみどり",
+      "grade": "ceremonial"
+    },
+    {
+      "id": "44",
+      "name": "Uji Hikari Competition 宇治光",
+      "grade": "ceremonial"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgrade\n34\tUme 梅\tceremonial\n35\tCho Ro Sui 朝露翠\tceremonial\n36\tSaemidori Competition Grade さえみどり\tceremonial\n37\tHonzu Asahi Competition Grade 本簾朝日\tceremonial\n38\tSuisho 翠初\tpremium\n39\tRyokuun 緑雲\tpremium\n40\tSeiha 青波\tpremium\n41\tSamidori Kun さみどり薫\tceremonial\n42\tNajirushi Premium Ceremonial 名印\tceremonial\n43\tSamidori Competition さみどり\tceremonial\n44\tUji Hikari Competition 宇治光\tceremonial\n",
+  "stderr": "",
+  "execution_time_ms": 1506
+}

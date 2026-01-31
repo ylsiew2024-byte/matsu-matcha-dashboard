@@ -1,0 +1,38 @@
+{
+  "query": "SELECT id, name FROM clients ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT id, name FROM clients ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Nana's Green Tea"
+    },
+    {
+      "id": "2",
+      "name": "The Coffee Bean & Tea Leaf"
+    },
+    {
+      "id": "3",
+      "name": "Tsujiri Singapore"
+    },
+    {
+      "id": "4",
+      "name": "Matchaya"
+    },
+    {
+      "id": "5",
+      "name": "Artisan Boulangerie"
+    },
+    {
+      "id": "6",
+      "name": "Kyo Matcha Bar"
+    },
+    {
+      "id": "7",
+      "name": "Gelato Factory"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\n1\tNana's Green Tea\n2\tThe Coffee Bean & Tea Leaf\n3\tTsujiri Singapore\n4\tMatchaya\n5\tArtisan Boulangerie\n6\tKyo Matcha Bar\n7\tGelato Factory\n",
+  "stderr": "",
+  "execution_time_ms": 1554
+}

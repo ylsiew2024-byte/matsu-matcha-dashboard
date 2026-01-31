@@ -1,0 +1,26 @@
+{
+  "query": "SELECT id, name FROM suppliers ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT id, name FROM suppliers ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Marukyu Koyamaen"
+    },
+    {
+      "id": "2",
+      "name": "Aiya Matcha"
+    },
+    {
+      "id": "3",
+      "name": "Ippodo Tea Co."
+    },
+    {
+      "id": "4",
+      "name": "Kagoshima Green Tea Co."
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\n1\tMarukyu Koyamaen\n2\tAiya Matcha\n3\tIppodo Tea Co.\n4\tKagoshima Green Tea Co.\n",
+  "stderr": "",
+  "execution_time_ms": 1556
+}

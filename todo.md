@@ -160,9 +160,9 @@
 - [x] Add user search and filtering
 
 ## Real Product Data Update
-- [ ] Browse matsumatcha.com for product information
-- [ ] Update database with real Matsu Matcha products
-- [ ] Replace sample data with actual product catalog
+- [x] Browse matsumatcha.com for product information
+- [x] Update database with real Matsu Matcha products
+- [x] Replace sample data with actual product catalog
 
 ## Bug Fixes
 - [x] Fix duplicate header/toolbar on User Management page
@@ -234,3 +234,13 @@
   - [x] Next delivery date for client
   - [x] AI recommendation for higher profitability matcha swaps (same/better quality)
 - [x] Add revert button for each product to restore previous versions
+
+## Updates (Jan 31 - Batch 2)
+- [x] Replace all products with real matsumatcha.com products (grade, price, quality)
+- [x] Add note: Matsu Matcha can edit/improve this engine by interacting with Manus
+- [x] Change Analytics revenue trend to line graph (already implemented)
+- [x] Remove AI Predictions page
+- [x] Remove duplicate clients and products in Pricing page
+- [x] Remove Simulation Mode feature
+- [x] Fix product revert function in Product Catalog (already working)
+- [x] Remove duplicate suppliers in Supplier Management page

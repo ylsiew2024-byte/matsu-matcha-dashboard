@@ -1,0 +1,109 @@
+{
+  "query": "SELECT * FROM data_versions WHERE entityType = 'sku' LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT * FROM data_versions WHERE entityType = 'sku' LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "entityType": "sku",
+      "entityId": "23",
+      "versionNumber": "1",
+      "data": "\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:39.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:33:39",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "2",
+      "entityType": "sku",
+      "entityId": "23",
+      "versionNumber": "2",
+      "data": "\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:45.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:33:45",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "3",
+      "entityType": "sku",
+      "entityId": "23",
+      "versionNumber": "3",
+      "data": "\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:50.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:33:50",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "4",
+      "entityType": "sku",
+      "entityId": "23",
+      "versionNumber": "4",
+      "data": "\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:50.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:39:17",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "5",
+      "entityType": "sku",
+      "entityId": "23",
+      "versionNumber": "5",
+      "data": "\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremoniahdfgfdg\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:39:33.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:39:33",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "6",
+      "entityType": "sku",
+      "entityId": "23",
+      "versionNumber": "6",
+      "data": "\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"test2\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:01.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:40:01",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "7",
+      "entityType": "sku",
+      "entityId": "12",
+      "versionNumber": "1",
+      "data": "\"{\\\"id\\\":12,\\\"supplierId\\\":1,\\\"name\\\":\\\"Test\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:04:36.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:10.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:40:10",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "8",
+      "entityType": "sku",
+      "entityId": "1",
+      "versionNumber": "1",
+      "data": "\"{\\\"id\\\":1,\\\"supplierId\\\":6,\\\"name\\\":\\\"History\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"summer\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:03:56.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:36.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:40:36",
+      "createdBy": "1",
+      "createdByName": "siew.yuanlong"
+    },
+    {
+      "id": "9",
+      "entityType": "sku",
+      "entityId": "1",
+      "versionNumber": "2",
+      "data": "\"{\\\"id\\\":1,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial 1\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:03:56.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:38.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":112}\"",
+      "changeDescription": "Updated SKU details",
+      "createdAt": "2026-01-31 05:40:38",
+      "createdBy": "112",
+      "createdByName": "Tze Kai Lim"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tentityType\tentityId\tversionNumber\tdata\tchangeDescription\tcreatedAt\tcreatedBy\tcreatedByName\n1\tsku\t23\t1\t\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:39.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:33:39\t1\tsiew.yuanlong\n2\tsku\t23\t2\t\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:45.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:33:45\t1\tsiew.yuanlong\n3\tsku\t23\t3\t\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:50.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:33:50\t1\tsiew.yuanlong\n4\tsku\t23\t4\t\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:33:50.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:39:17\t1\tsiew.yuanlong\n5\tsku\t23\t5\t\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremoniahdfgfdg\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:39:33.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:39:33\t1\tsiew.yuanlong\n6\tsku\t23\t6\t\"{\\\"id\\\":23,\\\"supplierId\\\":1,\\\"name\\\":\\\"test2\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":true,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Test\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:05:21.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:01.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:40:01\t1\tsiew.yuanlong\n7\tsku\t12\t1\t\"{\\\"id\\\":12,\\\"supplierId\\\":1,\\\"name\\\":\\\"Test\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:04:36.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:10.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:40:10\t1\tsiew.yuanlong\n8\tsku\t1\t1\t\"{\\\"id\\\":1,\\\"supplierId\\\":6,\\\"name\\\":\\\"History\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"summer\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:03:56.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:36.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":1}\"\tUpdated SKU details\t2026-01-31 05:40:36\t1\tsiew.yuanlong\n9\tsku\t1\t2\t\"{\\\"id\\\":1,\\\"supplierId\\\":1,\\\"name\\\":\\\"Aoarashi Ceremonial 1\\\",\\\"grade\\\":\\\"ceremonial\\\",\\\"qualityTier\\\":5,\\\"isSeasonal\\\":false,\\\"harvestSeason\\\":\\\"spring\\\",\\\"description\\\":\\\"Top-tier ceremonial grade, vibrant green color, smooth umami\\\",\\\"isActive\\\":true,\\\"createdAt\\\":\\\"2026-01-31T04:03:56.000Z\\\",\\\"updatedAt\\\":\\\"2026-01-31T05:40:38.000Z\\\",\\\"createdBy\\\":null,\\\"updatedBy\\\":112}\"\tUpdated SKU details\t2026-01-31 05:40:38\t112\tTze Kai Lim\n",
+  "stderr": "",
+  "execution_time_ms": 1530
+}

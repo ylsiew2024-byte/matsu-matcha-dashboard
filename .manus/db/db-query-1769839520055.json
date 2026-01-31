@@ -1,0 +1,34 @@
+{
+  "query": "SELECT id, name, isActive, CASE WHEN isActive = 1 THEN 'true' WHEN isActive = 0 THEN 'false' ELSE 'null' END as active_status FROM suppliers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT id, name, isActive, CASE WHEN isActive = 1 THEN 'true' WHEN isActive = 0 THEN 'false' ELSE 'null' END as active_status FROM suppliers;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Marukyu Koyamaen",
+      "isActive": "1",
+      "active_status": "true"
+    },
+    {
+      "id": "2",
+      "name": "Aiya Matcha",
+      "isActive": "1",
+      "active_status": "true"
+    },
+    {
+      "id": "3",
+      "name": "Ippodo Tea Co.",
+      "isActive": "1",
+      "active_status": "true"
+    },
+    {
+      "id": "4",
+      "name": "Kagoshima Green Tea Co.",
+      "isActive": "1",
+      "active_status": "true"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tisActive\tactive_status\n1\tMarukyu Koyamaen\t1\ttrue\n2\tAiya Matcha\t1\ttrue\n3\tIppodo Tea Co.\t1\ttrue\n4\tKagoshima Green Tea Co.\t1\ttrue\n",
+  "stderr": "",
+  "execution_time_ms": 1555
+}
