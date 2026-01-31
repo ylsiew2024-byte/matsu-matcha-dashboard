@@ -151,56 +151,6 @@ export default function AuditLog() {
         </CardContent>
       </Card>
 
-      {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="card-elegant">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{auditLogs?.length || 0}</div>
-          </CardContent>
-        </Card>
-        <Card className="card-elegant">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Creates
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {auditLogs?.filter((l: any) => l.action === 'create').length || 0}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="card-elegant">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Updates
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {auditLogs?.filter((l: any) => l.action === 'update').length || 0}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="card-elegant">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Deletes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {auditLogs?.filter((l: any) => l.action === 'delete').length || 0}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Audit Log Table */}
       <Card className="card-elegant">
         <CardHeader>

@@ -176,11 +176,12 @@ export default function Analytics() {
                   }}
                 />
                 <Line 
-                  type="monotone" 
+                  type="linear" 
                   dataKey="revenue" 
-                  stroke="hsl(var(--primary))" 
+                  stroke="#1a1a1a" 
                   strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))' }}
+                  dot={{ fill: '#1a1a1a', r: 5, strokeWidth: 0 }}
+                  activeDot={{ fill: '#1a1a1a', r: 6, strokeWidth: 0 }}
                 />
               </LineChart>
             </ResponsiveContainer>

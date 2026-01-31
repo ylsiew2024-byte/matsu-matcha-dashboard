@@ -269,3 +269,14 @@
 - [x] Fix Top Performing Products showing 0% margin (now shows 27-32% margins)
 - [x] Fix Low Margin Products showing 0% margin (all products now have healthy margins)
 - [x] Fix NaN values in Client Contribution Analysis table (now shows real kg values)
+
+
+## UI Updates (Jan 31 - Batch 5)
+- [x] Remove stats bar (Total Actions, Creates, Updates, Deletes) from Audit Log page
+- [x] Update revenue trend chart to proper line graph with connected dots and black line
+
+
+## Role Permissions Update (Jan 31 - Batch 6)
+- [x] Rename "admin" to "super admin" in role permissions
+- [x] Remove operations, finance, view_only roles
+- [x] Keep only super admin and employee roles
