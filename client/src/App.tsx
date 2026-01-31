@@ -26,6 +26,7 @@ import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
 import AiPredictions from "./pages/AiPredictions";
 import UserManagement from "./pages/UserManagement";
+import ClientProductRelations from "./pages/ClientProductRelations";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
         <Route path="/notifications" component={Notifications} />
         <Route path="/ai-predictions" component={AiPredictions} />
         <Route path="/users" component={UserManagement} />
+        <Route path="/client-products" component={ClientProductRelations} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

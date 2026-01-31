@@ -243,7 +243,6 @@ export const supplierOrders = mysqlTable("supplier_orders", {
   actualArrivalDate: timestamp("actualArrivalDate"),
   totalCostJpy: decimal("totalCostJpy", { precision: 14, scale: 2 }),
   totalCostSgd: decimal("totalCostSgd", { precision: 14, scale: 2 }),
-  exchangeRateUsed: decimal("exchangeRateUsed", { precision: 10, scale: 4 }),
   status: mysqlEnum("status", ["draft", "submitted", "confirmed", "shipped", "arrived", "cancelled"]).default("draft"),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -347,6 +346,89 @@ export const notifications = mysqlTable("notifications", {
 
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = typeof notifications.$inferInsert;
+
+// ============================================
+// CLIENT-PRODUCT RELATIONSHIPS (Canonical Data Layer)
+// This is the master table linking clients to products with all pricing,
+// volume, and logistics data for profitability analysis
+// ============================================
+
+export const clientProductRelations = mysqlTable("client_product_relations", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // A. Client & Product Information
+  clientId: int("clientId").notNull(),
+  skuId: int("skuId").notNull(),
+  supplierId: int("supplierId").notNull(),
+  qualityTier: mysqlEnum("qualityTier", ["standard", "premium", "seasonal"]).default("standard"),
+  
+  // B. Cost & Pricing Inputs
+  costPriceJpy: decimal("costPriceJpy", { precision: 12, scale: 2 }).notNull(), // per kg in JPY
+  exchangeRate: decimal("exchangeRate", { precision: 10, scale: 6 }).notNull(), // JPY to SGD
+  shippingFeePerKg: decimal("shippingFeePerKg", { precision: 10, scale: 2 }).default("15.00"), // SGD
+  importTaxRate: decimal("importTaxRate", { precision: 5, scale: 4 }).default("0.09"), // 9%
+  // Calculated: importTaxAmount = (costPriceJpy/exchangeRate + shippingFeePerKg) * importTaxRate
+  importTaxAmountSgd: decimal("importTaxAmountSgd", { precision: 12, scale: 2 }),
+  // Calculated: totalLandedCost = costPriceJpy/exchangeRate + shippingFeePerKg + importTaxAmount
+  totalLandedCostSgd: decimal("totalLandedCostSgd", { precision: 12, scale: 2 }),
+  sellingPricePerKg: decimal("sellingPricePerKg", { precision: 12, scale: 2 }).notNull(), // SGD
+  specialDiscountPercent: decimal("specialDiscountPercent", { precision: 5, scale: 2 }).default("0"),
+  // Calculated: profitPerKg = sellingPricePerKg * (1 - specialDiscountPercent/100) - totalLandedCostSgd
+  profitPerKgSgd: decimal("profitPerKgSgd", { precision: 12, scale: 2 }),
+  
+  // C. Volume & Profitability
+  monthlyPurchaseQtyKg: decimal("monthlyPurchaseQtyKg", { precision: 12, scale: 3 }).notNull(),
+  // Calculated: totalProfitPerMonth = profitPerKg * monthlyPurchaseQtyKg
+  totalProfitPerMonthSgd: decimal("totalProfitPerMonthSgd", { precision: 14, scale: 2 }),
+  // Calculated: annualizedProfit = totalProfitPerMonth * 12
+  annualizedProfitSgd: decimal("annualizedProfitSgd", { precision: 14, scale: 2 }),
+  
+  // D. Inventory Status (linked to inventory table but tracked here for convenience)
+  allocatedInventoryKg: decimal("allocatedInventoryKg", { precision: 12, scale: 3 }).default("0"),
+  
+  // E. Ordering & Logistics Timeline
+  lastOrderDate: timestamp("lastOrderDate"),
+  lastStockArrivalDate: timestamp("lastStockArrivalDate"),
+  orderingCadence: mysqlEnum("orderingCadence", ["1_month", "2_months"]).default("1_month"),
+  nextDeliveryDate: timestamp("nextDeliveryDate"),
+  // Calculated: daysUntilNextOrder based on demand & cadence
+  daysUntilNextOrder: int("daysUntilNextOrder"),
+  // Calculated: quantityRequiredToFulfill based on projected demand
+  quantityRequiredToFulfillKg: decimal("quantityRequiredToFulfillKg", { precision: 12, scale: 3 }),
+  
+  // F. Validation & Warnings (stored flags for quick filtering)
+  hasNegativeProfit: boolean("hasNegativeProfit").default(false),
+  hasInsufficientInventory: boolean("hasInsufficientInventory").default(false),
+  hasMissedReorderWindow: boolean("hasMissedReorderWindow").default(false),
+  
+  // Metadata
+  isActive: boolean("isActive").default(true),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+});
+
+export type ClientProductRelation = typeof clientProductRelations.$inferSelect;
+export type InsertClientProductRelation = typeof clientProductRelations.$inferInsert;
+
+// ============================================
+// EXCHANGE RATES (Historical tracking)
+// ============================================
+
+export const exchangeRates = mysqlTable("exchange_rates", {
+  id: int("id").autoincrement().primaryKey(),
+  fromCurrency: varchar("fromCurrency", { length: 3 }).notNull().default("JPY"),
+  toCurrency: varchar("toCurrency", { length: 3 }).notNull().default("SGD"),
+  rate: decimal("rate", { precision: 10, scale: 6 }).notNull(),
+  effectiveDate: timestamp("effectiveDate").defaultNow().notNull(),
+  source: varchar("source", { length: 100 }), // manual, api, etc.
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ExchangeRate = typeof exchangeRates.$inferSelect;
+export type InsertExchangeRate = typeof exchangeRates.$inferInsert;
 
 // ============================================
 // SYSTEM SETTINGS

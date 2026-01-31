@@ -927,6 +927,110 @@ Provide helpful, data-driven insights. When discussing pricing scenarios, show c
       }),
   }),
 
+  // Client-Product Relations (Canonical Data Layer)
+  clientProductRelations: router({
+    list: protectedProcedure.query(async () => {
+      return db.getClientProductRelations();
+    }),
+    create: managerProcedure
+      .input(z.object({
+        clientId: z.number(),
+        skuId: z.number(),
+        supplierId: z.number(),
+        qualityTier: z.enum(['standard', 'premium', 'seasonal']).optional(),
+        costPriceJpy: z.string(),
+        exchangeRate: z.string(),
+        shippingFeePerKg: z.string().optional(),
+        importTaxRate: z.string().optional(),
+        sellingPricePerKg: z.string(),
+        specialDiscountPercent: z.string().optional(),
+        monthlyPurchaseQtyKg: z.string(),
+        orderingCadence: z.enum(['1_month', '2_months']).optional(),
+        nextDeliveryDate: z.string().nullable().optional(),
+        notes: z.string().optional(),
+        importTaxAmountSgd: z.string().optional(),
+        totalLandedCostSgd: z.string().optional(),
+        profitPerKgSgd: z.string().optional(),
+        totalProfitPerMonthSgd: z.string().optional(),
+        annualizedProfitSgd: z.string().optional(),
+        hasNegativeProfit: z.boolean().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { nextDeliveryDate, ...rest } = input;
+        const createData = {
+          ...rest,
+          nextDeliveryDate: nextDeliveryDate ? new Date(nextDeliveryDate) : null,
+        };
+        const result = await db.createClientProductRelation(createData);
+        await logAction(ctx.user.id, ctx.user.name, 'CREATE', 'client_product_relation', result.id, null, input);
+        return result;
+      }),
+    update: managerProcedure
+      .input(z.object({
+        id: z.number(),
+        clientId: z.number().optional(),
+        skuId: z.number().optional(),
+        supplierId: z.number().optional(),
+        qualityTier: z.enum(['standard', 'premium', 'seasonal']).optional(),
+        costPriceJpy: z.string().optional(),
+        exchangeRate: z.string().optional(),
+        shippingFeePerKg: z.string().optional(),
+        importTaxRate: z.string().optional(),
+        sellingPricePerKg: z.string().optional(),
+        specialDiscountPercent: z.string().optional(),
+        monthlyPurchaseQtyKg: z.string().optional(),
+        orderingCadence: z.enum(['1_month', '2_months']).optional(),
+        nextDeliveryDate: z.string().nullable().optional(),
+        notes: z.string().optional(),
+        importTaxAmountSgd: z.string().optional(),
+        totalLandedCostSgd: z.string().optional(),
+        profitPerKgSgd: z.string().optional(),
+        totalProfitPerMonthSgd: z.string().optional(),
+        annualizedProfitSgd: z.string().optional(),
+        hasNegativeProfit: z.boolean().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, nextDeliveryDate, ...rest } = input;
+        const updateData = {
+          ...rest,
+          nextDeliveryDate: nextDeliveryDate ? new Date(nextDeliveryDate) : null,
+        };
+        const previous = await db.getClientProductRelationById(id);
+        await db.updateClientProductRelation(id, updateData);
+        await logAction(ctx.user.id, ctx.user.name, 'UPDATE', 'client_product_relation', id, previous, input);
+        await createVersion('client_product_relation', id, input, 'Updated client-product relation', ctx.user.id, ctx.user.name);
+        return { success: true };
+      }),
+    delete: managerProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const previous = await db.getClientProductRelationById(input.id);
+        await db.deleteClientProductRelation(input.id);
+        await logAction(ctx.user.id, ctx.user.name, 'DELETE', 'client_product_relation', input.id, previous, null);
+        return { success: true };
+      }),
+  }),
+
+  // Exchange Rates
+  exchangeRates: router({
+    latest: protectedProcedure.query(async () => {
+      return db.getLatestExchangeRate();
+    }),
+    list: protectedProcedure.query(async () => {
+      return db.getExchangeRates();
+    }),
+    create: managerProcedure
+      .input(z.object({
+        rate: z.number(),
+        source: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const result = await db.createExchangeRate(input.rate, input.source);
+        await logAction(ctx.user.id, ctx.user.name, 'CREATE', 'exchange_rate', result.id, null, input);
+        return result;
+      }),
+  }),
+
   // System Settings
   settings: router({
     list: adminProcedure.query(async () => {

@@ -41,7 +41,8 @@ import {
   TrendingUp,
   AlertTriangle,
   Brain,
-  UserCog
+  UserCog,
+  Link2
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -55,6 +56,7 @@ const menuItems = [
   { icon: Truck, label: "Suppliers", path: "/suppliers" },
   { icon: Package, label: "Products", path: "/products" },
   { icon: DollarSign, label: "Pricing", path: "/pricing" },
+  { icon: Link2, label: "Client-Products", path: "/client-products" },
   { icon: Package, label: "Inventory", path: "/inventory" },
   { icon: TrendingUp, label: "Orders", path: "/orders" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },

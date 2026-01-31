@@ -166,3 +166,49 @@
 
 ## Bug Fixes
 - [x] Fix duplicate header/toolbar on User Management page
+
+## Comprehensive Data Field Implementation (Completed)
+
+### A. Client & Product Information
+- [x] Client Name (text, required, unique)
+- [x] Matcha Powder Name/SKU (text, required)
+- [x] Supplier Name (text, required)
+- [x] Matcha Quality Tier dropdown (Standard/Premium/Seasonal)
+
+### B. Cost & Pricing Inputs
+- [x] Cost Price per kg (JPY) - required
+- [x] Currency Exchange Rate (JPY → SGD) - editable with default
+- [x] Shipping Fee per kg (SGD) - default $15
+- [x] Import Tax Rate (%) - default 9%
+- [x] Import Tax Amount (SGD) - calculated
+- [x] Total Landed Cost per kg (SGD) - calculated
+- [x] Selling Price per kg (SGD) - editable
+- [x] Special Client Discount (%) - optional
+- [x] Profit per kg (SGD) - calculated
+
+### C. Volume & Profitability
+- [x] Monthly Purchase Quantity (kg) - required
+- [x] Total Profit per Month (SGD) - calculated
+- [x] Annualized Profit (SGD) - calculated
+
+### D. Inventory Status
+- [x] Existing Inventory in Stock (kg)
+- [x] Allocated Inventory (kg)
+- [x] Unallocated Inventory (kg) - calculated
+
+### E. Ordering & Logistics Timeline
+- [x] Last Order Date
+- [x] Last Stock Arrival Date
+- [x] Days Until Next Order - calculated
+- [x] Quantity Required to Fulfill (kg) - calculated
+- [x] Ordering Cadence dropdown (1 month/2 months)
+- [x] Next Delivery Date (Client)
+
+### F. Data Behavior & Validation
+- [x] Numeric field validation (reject invalid values)
+- [x] Real-time calculated field updates
+- [x] Warning: Negative profit per kg
+- [x] Warning: Insufficient inventory to meet demand
+- [x] Warning: Missed reorder windows
+- [x] Version control for all edits
+- [x] Audit trail for data changes

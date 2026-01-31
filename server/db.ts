@@ -17,7 +17,9 @@ import {
   aiChatHistory, InsertAiChatHistory,
   notifications, InsertNotification,
   auditLogs, InsertAuditLog,
-  systemSettings, InsertSystemSetting
+  systemSettings, InsertSystemSetting,
+  clientProductRelations, InsertClientProductRelation,
+  exchangeRates, InsertExchangeRate
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -826,4 +828,101 @@ export async function getBusinessContext() {
     recentOrders,
     lowStockAlerts: lowStock
   };
+}
+
+// ============================================
+// CLIENT-PRODUCT RELATIONS FUNCTIONS
+// ============================================
+
+export async function getClientProductRelations() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get relations with joined client, sku, and supplier names
+  const relations = await db.select().from(clientProductRelations);
+  
+  // Get all clients, skus, and suppliers for name lookup
+  const [clientsList, skusList, suppliersList] = await Promise.all([
+    db.select({ id: clients.id, name: clients.name }).from(clients),
+    db.select({ id: matchaSkus.id, name: matchaSkus.name }).from(matchaSkus),
+    db.select({ id: suppliers.id, name: suppliers.name }).from(suppliers),
+  ]);
+  
+  const clientMap = new Map(clientsList.map(c => [c.id, c.name]));
+  const skuMap = new Map(skusList.map(s => [s.id, s.name]));
+  const supplierMap = new Map(suppliersList.map(s => [s.id, s.name]));
+  
+  return relations.map(r => ({
+    ...r,
+    clientName: clientMap.get(r.clientId) || 'Unknown',
+    skuName: skuMap.get(r.skuId) || 'Unknown',
+    supplierName: supplierMap.get(r.supplierId) || 'Unknown',
+  }));
+}
+
+export async function getClientProductRelationById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(clientProductRelations).where(eq(clientProductRelations.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createClientProductRelation(data: Partial<InsertClientProductRelation>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(clientProductRelations).values(data as InsertClientProductRelation);
+  return { id: Number(result[0].insertId), ...data };
+}
+
+export async function updateClientProductRelation(id: number, data: Partial<InsertClientProductRelation>) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(clientProductRelations).set(data).where(eq(clientProductRelations.id, id));
+}
+
+export async function deleteClientProductRelation(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(clientProductRelations).where(eq(clientProductRelations.id, id));
+}
+
+// ============================================
+// EXCHANGE RATES FUNCTIONS
+// ============================================
+
+export async function getLatestExchangeRate() {
+  const db = await getDb();
+  if (!db) return { rate: 0.0091 }; // Default JPY to SGD
+  
+  const result = await db.select()
+    .from(exchangeRates)
+    .orderBy(desc(exchangeRates.effectiveDate))
+    .limit(1);
+  
+  return result[0] || { rate: 0.0091 };
+}
+
+export async function getExchangeRates() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select()
+    .from(exchangeRates)
+    .orderBy(desc(exchangeRates.effectiveDate))
+    .limit(100);
+}
+
+export async function createExchangeRate(rate: number, source?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(exchangeRates).values({
+    rate: rate.toString(),
+    source,
+  });
+  
+  return { id: Number(result[0].insertId), rate, source };
 }
