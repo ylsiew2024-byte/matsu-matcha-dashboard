@@ -1,6 +1,5 @@
 import { useSecurity } from "@/contexts/SecurityContext";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -8,7 +7,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { 
-  Lock, 
   Shield, 
   Clock, 
 } from "lucide-react";
@@ -17,7 +15,6 @@ const SESSION_TIMEOUT_MINUTES = 30;
 
 export function SecurityToolbar() {
   const { 
-    activatePanicMode, 
     currentRole,
     lastActivity,
   } = useSecurity();
@@ -63,24 +60,6 @@ export function SecurityToolbar() {
         </Tooltip>
       )}
       
-      {/* Panic/Lock button */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={activatePanicMode}
-            className="h-8 w-8 border-primary/30 hover:bg-primary/10"
-          >
-            <Lock className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Lock Screen (Ctrl+Shift+L)</p>
-          <p className="text-xs text-muted-foreground">Hide all sensitive data instantly</p>
-        </TooltipContent>
-      </Tooltip>
-      
       {/* Role badge */}
       <Badge variant="outline" className={getRoleBadgeColor()}>
         <Shield className="h-3 w-3 mr-1" />
@@ -90,27 +69,16 @@ export function SecurityToolbar() {
   );
 }
 
-// Compact version for mobile/sidebar
+// Compact version for mobile/sidebar - just show role
 export function SecurityToolbarCompact() {
-  const { activatePanicMode, currentRole } = useSecurity();
+  const { currentRole } = useSecurity();
   
   return (
     <div className="flex items-center gap-1">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={activatePanicMode}
-            className="h-7 w-7"
-          >
-            <Lock className="h-3.5 w-3.5" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="right">
-          Lock Screen
-        </TooltipContent>
-      </Tooltip>
+      <Badge variant="outline" className="text-xs">
+        <Shield className="h-3 w-3 mr-1" />
+        {currentRole === 'super_admin' ? 'Admin' : currentRole}
+      </Badge>
     </div>
   );
 }

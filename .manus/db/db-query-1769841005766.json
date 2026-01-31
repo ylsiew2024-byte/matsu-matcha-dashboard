@@ -1,0 +1,37 @@
+{
+  "query": "SELECT p.id, p.skuId, m.name, p.costPriceJpy, p.sellingPricePerKg, p.exchangeRate, p.isCurrentPrice FROM pricing p LEFT JOIN matcha_skus m ON p.skuId = m.id ORDER BY p.skuId;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT p.id, p.skuId, m.name, p.costPriceJpy, p.sellingPricePerKg, p.exchangeRate, p.isCurrentPrice FROM pricing p LEFT JOIN matcha_skus m ON p.skuId = m.id ORDER BY p.skuId;",
+  "rows": [
+    {
+      "id": "34",
+      "skuId": "1",
+      "name": "NULL",
+      "costPriceJpy": "1000.00",
+      "sellingPricePerKg": "1000.00",
+      "exchangeRate": "110.0000",
+      "isCurrentPrice": "1"
+    },
+    {
+      "id": "36",
+      "skuId": "18",
+      "name": "NULL",
+      "costPriceJpy": "15000.00",
+      "sellingPricePerKg": "250.00",
+      "exchangeRate": "110.0000",
+      "isCurrentPrice": "1"
+    },
+    {
+      "id": "35",
+      "skuId": "32",
+      "name": "NULL",
+      "costPriceJpy": "23232.00",
+      "sellingPricePerKg": "23232.00",
+      "exchangeRate": "1100.0000",
+      "isCurrentPrice": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tskuId\tname\tcostPriceJpy\tsellingPricePerKg\texchangeRate\tisCurrentPrice\n34\t1\tNULL\t1000.00\t1000.00\t110.0000\t1\n36\t18\tNULL\t15000.00\t250.00\t110.0000\t1\n35\t32\tNULL\t23232.00\t23232.00\t1100.0000\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1518
+}

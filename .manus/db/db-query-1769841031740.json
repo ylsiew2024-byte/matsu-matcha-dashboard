@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM pricing WHERE 1=1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute DELETE FROM pricing WHERE 1=1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1904
+}

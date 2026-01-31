@@ -329,7 +329,7 @@ export default function Analytics() {
                       <TableCell className="font-medium">{getClientName(client.clientId)}</TableCell>
                       <TableCell className="text-right">{client.orderCount}</TableCell>
                       <TableCell className="text-right font-mono">
-                        {Number(client.totalQuantityKg).toFixed(2)} kg
+                        {client.totalQuantity ? Number(client.totalQuantity).toFixed(2) : '0.00'} kg
                       </TableCell>
                       <TableCell className="text-right font-mono font-medium">
                         SGD {Number(client.totalRevenue).toFixed(2)}

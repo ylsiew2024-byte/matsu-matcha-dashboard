@@ -6,7 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { SecurityProvider } from "./contexts/SecurityContext";
 import DashboardLayout from "./components/DashboardLayout";
-import PanicScreen from "./components/PanicScreen";
+// PanicScreen removed per user request
 import UserWatermark from "./components/UserWatermark";
 import ExportConfirmDialog, { ExportProvider } from "./components/ExportConfirmDialog";
 // SimulationModeBanner removed per user request
@@ -62,7 +62,7 @@ function App() {
           <SecurityProvider>
             <ExportProvider>
             {/* Security overlays */}
-            <PanicScreen />
+            {/* PanicScreen removed per user request */}
             <UserWatermark />
             <ExportConfirmDialog />
             {/* SimulationModeBanner removed per user request */}
