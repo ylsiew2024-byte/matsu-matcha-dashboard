@@ -729,6 +729,10 @@ export const appRouter = router({
           content: input.message,
         });
         
+        // Detect if this is a what-if scenario question
+        const scenarioKeywords = ['what if', 'what-if', 'scenario', 'impact', 'change price', 'increase', 'decrease', 'margin', 'forecast', 'projection', 'compare', 'analysis'];
+        const isScenarioQuestion = scenarioKeywords.some(kw => input.message.toLowerCase().includes(kw));
+        
         // Build messages for LLM
         const systemPrompt = `You are an AI assistant for Matsu Matcha, a B2B matcha distribution company. You help analyze business data, provide recommendations, and answer questions about inventory, pricing, profitability, and demand forecasting.
 
@@ -745,6 +749,40 @@ SKUs: ${JSON.stringify(businessContext.skus?.slice(0, 5))}
 Current Pricing: ${JSON.stringify(businessContext.pricing?.slice(0, 5))}
 Inventory: ${JSON.stringify(businessContext.inventory?.slice(0, 5))}
 Recent Orders: ${JSON.stringify(businessContext.recentOrders?.slice(0, 5))}
+` : ''}
+
+${isScenarioQuestion ? `
+IMPORTANT: The user is asking a what-if scenario question. You MUST include a visualization block in your response using the following JSON format wrapped in <<<VISUALIZATION>>> tags:
+
+<<<VISUALIZATION>>>
+{
+  "type": "pricing" | "margin" | "forecast" | "breakdown" | "comparison",
+  "title": "Chart Title",
+  "data": {
+    // For pricing scenarios:
+    "currentPrice": number,
+    "currentMargin": number (percentage),
+    "currentVolume": number,
+    "productName": "string",
+    "currency": "USD"
+    
+    // For margin comparisons:
+    "products": [{ "name": "string", "currentMargin": number, "suggestedMargin": number, "revenue": number }]
+    
+    // For forecasts:
+    "forecastData": [{ "month": "Jan", "actual": number, "forecast": number, "reorderPoint": number }],
+    "productName": "string",
+    "unit": "kg"
+    
+    // For breakdowns:
+    "breakdown": [{ "category": "string", "value": number, "percentage": number }],
+    "total": number,
+    "currency": "USD"
+  }
+}
+<<<VISUALIZATION>>>
+
+Always provide realistic sample data based on the business context. Use actual product names, realistic prices, and margins when available.
 ` : ''}
 
 Provide helpful, data-driven insights. When discussing pricing scenarios, show calculations. When recommending alternatives, explain the margin improvements. Be concise but thorough.`;
