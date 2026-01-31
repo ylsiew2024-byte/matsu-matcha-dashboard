@@ -32,7 +32,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, DollarSign, Calculator, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { Plus, DollarSign, Calculator, TrendingUp, TrendingDown, Info, Lock } from "lucide-react";
+import { useSecurity, useSensitiveData } from "@/contexts/SecurityContext";
+import { SensitiveValue, SensitiveDataBadge, RestrictedContent } from "@/components/SensitiveValue";
 import {
   Tooltip,
   TooltipContent,
@@ -42,7 +44,11 @@ import {
 export default function Pricing() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
-  const canEdit = user?.role === 'admin' || user?.role === 'finance';
+  const { hasPermission, isPanicMode } = useSecurity();
+  const { shouldBlur } = useSensitiveData();
+  const canEdit = hasPermission('canEditPricing');
+  const canViewCosts = hasPermission('canViewCosts');
+  const canViewMargins = hasPermission('canViewMargins');
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedSkuId, setSelectedSkuId] = useState<string>("");
@@ -450,24 +456,49 @@ export default function Pricing() {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
-                            ¥{Number(item.costPriceJpy).toLocaleString()}
+                            {canViewCosts && !shouldBlur ? (
+                              <span>¥{Number(item.costPriceJpy).toLocaleString()}</span>
+                            ) : (
+                              <span className="flex items-center justify-end gap-1 text-muted-foreground">
+                                <Lock className="h-3 w-3" />
+                                <span className="blur-sm select-none">¥0,000</span>
+                              </span>
+                            )}
                           </TableCell>
                           <TableCell className="text-right">
-                            {Number(item.exchangeRate).toFixed(2)}
+                            {canViewCosts && !shouldBlur ? (
+                              Number(item.exchangeRate).toFixed(2)
+                            ) : (
+                              <span className="blur-sm select-none">0.00</span>
+                            )}
                           </TableCell>
                           <TableCell className="text-right">
-                            ${landed.toFixed(2)}
+                            {canViewCosts && !shouldBlur ? (
+                              <span>${landed.toFixed(2)}</span>
+                            ) : (
+                              <span className="flex items-center justify-end gap-1 text-muted-foreground">
+                                <Lock className="h-3 w-3" />
+                                <span className="blur-sm select-none">$0.00</span>
+                              </span>
+                            )}
                           </TableCell>
                           <TableCell className="text-right font-medium">
                             ${selling.toFixed(2)}
                           </TableCell>
                           <TableCell className="text-right">
-                            <Badge 
-                              variant={margin >= 20 ? "default" : margin >= 15 ? "secondary" : "destructive"}
-                              className="font-mono"
-                            >
-                              {margin.toFixed(1)}%
-                            </Badge>
+                            {canViewMargins && !shouldBlur ? (
+                              <Badge 
+                                variant={margin >= 20 ? "default" : margin >= 15 ? "secondary" : "destructive"}
+                                className="font-mono"
+                              >
+                                {margin.toFixed(1)}%
+                              </Badge>
+                            ) : (
+                              <span className="flex items-center justify-end gap-1 text-muted-foreground">
+                                <Lock className="h-3 w-3" />
+                                <span className="blur-sm select-none">00.0%</span>
+                              </span>
+                            )}
                           </TableCell>
                         </TableRow>
                       );

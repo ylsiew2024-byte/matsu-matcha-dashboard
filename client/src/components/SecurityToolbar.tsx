@@ -1,0 +1,127 @@
+import { useSecurity } from "@/contexts/SecurityContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { 
+  Lock, 
+  Shield, 
+  Clock, 
+  User, 
+  AlertTriangle,
+  Eye,
+  EyeOff,
+  FlaskConical,
+  LogOut,
+} from "lucide-react";
+import { EnterSimulationButton } from "./SimulationModeBanner";
+
+export function SecurityToolbar() {
+  const { 
+    activatePanicMode, 
+    getUserRole, 
+    sessionTimeoutMinutes,
+    lastActivity,
+    isSimulationMode,
+  } = useSecurity();
+  const { user, logout } = useAuth();
+  
+  const role = getUserRole();
+  const minutesSinceActivity = Math.floor((Date.now() - lastActivity) / 1000 / 60);
+  const minutesRemaining = Math.max(0, sessionTimeoutMinutes - minutesSinceActivity);
+  
+  const getRoleBadgeColor = () => {
+    switch (role) {
+      case 'admin': return 'bg-red-500/10 text-red-500 border-red-500/30';
+      case 'finance': return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
+      case 'operations': return 'bg-green-500/10 text-green-500 border-green-500/30';
+      default: return 'bg-gray-500/10 text-gray-500 border-gray-500/30';
+    }
+  };
+  
+  return (
+    <div className="flex items-center gap-2">
+      {/* Simulation mode button */}
+      <EnterSimulationButton />
+      
+      {/* Session timer warning */}
+      {minutesRemaining <= 5 && minutesRemaining > 0 && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 animate-pulse">
+              <Clock className="h-3 w-3 mr-1" />
+              {minutesRemaining}m
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            Session expires in {minutesRemaining} minutes
+          </TooltipContent>
+        </Tooltip>
+      )}
+      
+      {/* Panic/Lock button */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={activatePanicMode}
+            className="h-8 w-8 border-primary/30 hover:bg-primary/10"
+          >
+            <Lock className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Lock Screen (Ctrl+Shift+L)</p>
+          <p className="text-xs text-muted-foreground">Hide all sensitive data instantly</p>
+        </TooltipContent>
+      </Tooltip>
+      
+      {/* Role badge */}
+      <Badge variant="outline" className={getRoleBadgeColor()}>
+        <Shield className="h-3 w-3 mr-1" />
+        {role.replace('_', ' ')}
+      </Badge>
+    </div>
+  );
+}
+
+// Compact version for mobile/sidebar
+export function SecurityToolbarCompact() {
+  const { activatePanicMode, getUserRole } = useSecurity();
+  const role = getUserRole();
+  
+  return (
+    <div className="flex items-center gap-1">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={activatePanicMode}
+            className="h-7 w-7"
+          >
+            <Lock className="h-3.5 w-3.5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          Lock Screen
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}
+
+export default SecurityToolbar;

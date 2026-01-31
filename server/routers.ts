@@ -714,9 +714,41 @@ export const appRouter = router({
       }))
       .mutation(async ({ input, ctx }) => {
         const sessionId = input.sessionId || nanoid();
+        const userRole = ctx.user.role;
         
-        // Get business context for AI
-        const businessContext = await db.getBusinessContext();
+        // Role-based permission checks
+        const canViewCosts = ['admin', 'finance'].includes(userRole);
+        const canViewMargins = ['admin', 'finance'].includes(userRole);
+        const canAccessAI = ['admin', 'finance', 'operations'].includes(userRole);
+        
+        // Block AI access for view_only users
+        if (!canAccessAI) {
+          throw new TRPCError({ 
+            code: 'FORBIDDEN', 
+            message: 'AI Assistant access is restricted for your role. Please contact an administrator.' 
+          });
+        }
+        
+        // Get business context for AI (filtered by role)
+        const rawBusinessContext = await db.getBusinessContext();
+        
+        // Filter sensitive data based on role
+        const businessContext = rawBusinessContext ? {
+          ...rawBusinessContext,
+          // Remove cost data for non-authorized users
+          pricing: canViewCosts ? rawBusinessContext.pricing : rawBusinessContext.pricing?.map((p: any) => ({
+            ...p,
+            costPriceJpy: '[RESTRICTED]',
+            landedCostSgd: '[RESTRICTED]',
+          })),
+          // Remove margin data for non-authorized users
+          skus: rawBusinessContext.skus,
+          suppliers: canViewCosts ? rawBusinessContext.suppliers : rawBusinessContext.suppliers?.map((s: any) => ({
+            ...s,
+            paymentTerms: '[RESTRICTED]',
+            leadTimeDays: s.leadTimeDays,
+          })),
+        } : null;
         
         // Get chat history
         const history = await db.getAiChatHistory(sessionId, 10);
@@ -733,14 +765,23 @@ export const appRouter = router({
         const scenarioKeywords = ['what if', 'what-if', 'scenario', 'impact', 'change price', 'increase', 'decrease', 'margin', 'forecast', 'projection', 'compare', 'analysis'];
         const isScenarioQuestion = scenarioKeywords.some(kw => input.message.toLowerCase().includes(kw));
         
-        // Build messages for LLM
+        // Build messages for LLM with role-based restrictions
+        const roleRestrictions = !canViewCosts ? `
+IMPORTANT SECURITY RESTRICTIONS:
+- The current user (${ctx.user.name}, role: ${userRole}) does NOT have permission to view cost prices, landed costs, or profit margins.
+- You MUST NOT reveal any cost data, supplier pricing, or margin calculations in your responses.
+- If asked about costs or margins, politely explain that this information is restricted to Finance and Admin roles.
+- Focus on inventory levels, order status, and general business operations instead.
+` : '';
+        
         const systemPrompt = `You are an AI assistant for Matsu Matcha, a B2B matcha distribution company. You help analyze business data, provide recommendations, and answer questions about inventory, pricing, profitability, and demand forecasting.
-
+${roleRestrictions}
 Current Business Context:
 - Suppliers: ${businessContext?.suppliers?.length || 0} active suppliers
 - Clients: ${businessContext?.clients?.length || 0} active clients
 - SKUs: ${businessContext?.skus?.length || 0} matcha products
 - Low Stock Alerts: ${businessContext?.lowStockAlerts?.length || 0} items
+- User Role: ${userRole} (${canViewCosts ? 'Full access' : 'Restricted - no cost/margin data'})
 
 ${businessContext ? `
 Suppliers: ${JSON.stringify(businessContext.suppliers?.slice(0, 5))}

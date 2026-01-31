@@ -45,6 +45,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import { SecurityToolbar, SecurityToolbarCompact } from "./SecurityToolbar";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -347,6 +348,14 @@ function DashboardLayoutContent({
           </div>
           
           <div className="flex items-center gap-2">
+            {/* Security Toolbar */}
+            <div className="hidden md:flex">
+              <SecurityToolbar />
+            </div>
+            <div className="md:hidden">
+              <SecurityToolbarCompact />
+            </div>
+            
             {/* Confidential Badge */}
             <div className="confidential-badge hidden sm:flex">
               <Shield className="w-3 h-3" />

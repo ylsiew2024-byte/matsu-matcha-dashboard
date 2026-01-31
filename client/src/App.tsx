@@ -4,7 +4,12 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { SecurityProvider } from "./contexts/SecurityContext";
 import DashboardLayout from "./components/DashboardLayout";
+import PanicScreen from "./components/PanicScreen";
+import UserWatermark from "./components/UserWatermark";
+import ExportConfirmDialog from "./components/ExportConfirmDialog";
+import SimulationModeBanner from "./components/SimulationModeBanner";
 
 // Pages
 import Home from "./pages/Home";
@@ -48,8 +53,17 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <Toaster />
-          <Router />
+          <SecurityProvider>
+            {/* Security overlays */}
+            <PanicScreen />
+            <UserWatermark />
+            <ExportConfirmDialog />
+            <SimulationModeBanner />
+            
+            {/* Main app */}
+            <Toaster />
+            <Router />
+          </SecurityProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

@@ -81,3 +81,43 @@
 - [x] Margin impact analysis with visual feedback
 - [x] Dynamic calculation displays
 - [x] Comparison tables for scenarios
+
+## Security Enhancements
+
+### Access Control
+- [x] Enforce RBAC with Admin, Operations, Finance, Read-only roles
+- [x] Restrict sensitive views (costs, margins, supplier terms) by role
+- [x] Block all anonymous/public access
+
+### Data Protection
+- [x] Secure storage indicators for sensitive data
+- [x] Prevent data leakage across roles and sessions
+- [x] Role-based data filtering in API responses
+
+### Session & Interface Security
+- [x] Automatic session timeout after inactivity
+- [x] Manual panic/lock screen mode to blur sensitive values
+- [x] User identity watermark on dashboard
+- [x] Prevent browser caching of sensitive pages
+
+### Versioning & Audit Trail
+- [x] Log all pricing, inventory, forecast changes
+- [x] Record user, timestamp, previous/new values
+- [x] Enable rollback while preserving audit history
+
+### Environment Separation
+- [x] Separate simulation mode from live data
+- [x] Require explicit confirmation for simulation-to-live changes
+
+### AI Safety & Data Boundaries
+- [x] AI agents respect user role permissions
+- [x] AI outputs filtered by user authorization level
+- [x] No external data sharing without consent
+
+### Confidentiality Signaling
+- [x] CONFIDENTIAL label on all pages
+- [x] Visual cues for sensitive data (icons, warnings)
+- [x] Confirm before exporting/downloading data
+
+### Final Security Rule
+- [x] Block/warn features that risk data leakage or unauthorized access
