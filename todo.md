@@ -280,3 +280,8 @@
 - [x] Rename "admin" to "super admin" in role permissions
 - [x] Remove operations, finance, view_only roles
 - [x] Keep only super admin and employee roles
+
+
+## Inventory Permissions Update (Jan 31 - Batch 7)
+- [x] Allow employee role to change stock in inventory (already enabled via employeeProcedure)
+- [x] Add revert button for inventory changes (both employee and super admin)

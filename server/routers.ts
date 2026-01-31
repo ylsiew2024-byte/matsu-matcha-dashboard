@@ -532,6 +532,42 @@ export const appRouter = router({
         
         return { id };
       }),
+    revertTransaction: employeeProcedure
+      .input(z.object({
+        transactionId: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Get the transaction to revert
+        const transactions = await db.getInventoryTransactions(undefined, 1000);
+        const tx = transactions.find(t => t.id === input.transactionId);
+        
+        if (!tx) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Transaction not found' });
+        }
+        
+        const inv = await db.getInventoryBySkuId(tx.skuId);
+        if (!inv) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Inventory not found' });
+        }
+        
+        // Create a reversal transaction
+        const reversalType = ['purchase', 'deallocation'].includes(tx.transactionType) ? 'sale' : 'purchase';
+        const reversalId = await db.createInventoryTransaction({
+          skuId: tx.skuId,
+          inventoryId: inv.id,
+          transactionType: reversalType as any,
+          quantityKg: tx.quantityKg,
+          notes: `Reversal of transaction #${tx.id}: ${tx.notes || tx.transactionType}`,
+          createdBy: ctx.user.id,
+        });
+        
+        await logAction(ctx.user.id, ctx.user.name, 'CREATE', 'inventory_transaction', reversalId, null, {
+          originalTransactionId: tx.id,
+          type: 'reversal',
+        });
+        
+        return { id: reversalId, message: 'Transaction reverted successfully' };
+      }),
   }),
 
   // Client Orders

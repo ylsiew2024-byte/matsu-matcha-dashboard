@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown } from "lucide-react";
+import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown, Undo2 } from "lucide-react";
 
 export default function Inventory() {
   const { user } = useAuth();
@@ -74,6 +74,18 @@ export default function Inventory() {
       setIsAddInventoryOpen(false);
       setSelectedSkuForAdd("");
       toast.success("Inventory added successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const revertMutation = trpc.inventory.revertTransaction.useMutation({
+    onSuccess: () => {
+      utils.inventory.list.invalidate();
+      utils.inventory.lowStock.invalidate();
+      utils.inventory.transactions.invalidate();
+      toast.success("Transaction reverted successfully");
     },
     onError: (error) => {
       toast.error(error.message);
@@ -359,6 +371,7 @@ export default function Inventory() {
                   <TableHead>Type</TableHead>
                   <TableHead className="text-right">Quantity</TableHead>
                   <TableHead>Notes</TableHead>
+                  {canEdit && <TableHead className="text-center">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -383,6 +396,20 @@ export default function Inventory() {
                       <TableCell className="text-muted-foreground truncate max-w-[200px]">
                         {tx.notes || '-'}
                       </TableCell>
+                      {canEdit && (
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => revertMutation.mutate({ transactionId: tx.id })}
+                            disabled={revertMutation.isPending}
+                            title="Revert Transaction"
+                          >
+                            <Undo2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}
