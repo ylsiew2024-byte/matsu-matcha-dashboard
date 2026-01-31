@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import DashboardLayout from "@/components/DashboardLayout";
+// DashboardLayout is already provided by App.tsx Router
 
 type UserRole = "super_admin" | "manager" | "employee" | "business_client";
 
@@ -105,13 +105,11 @@ export default function UserManagement() {
   // Check if current user is Super Admin
   if (user?.role !== "super_admin") {
     return (
-      <DashboardLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <AlertTriangle className="h-16 w-16 text-amber-500" />
-          <h2 className="text-2xl font-bold">Access Denied</h2>
-          <p className="text-muted-foreground">Only Super Admins can access User Management.</p>
-        </div>
-      </DashboardLayout>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <AlertTriangle className="h-16 w-16 text-amber-500" />
+        <h2 className="text-2xl font-bold">Access Denied</h2>
+        <p className="text-muted-foreground">Only Super Admins can access User Management.</p>
+      </div>
     );
   }
 
@@ -152,8 +150,7 @@ export default function UserManagement() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -420,7 +417,6 @@ export default function UserManagement() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

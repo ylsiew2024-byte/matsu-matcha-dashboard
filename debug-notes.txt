@@ -1,0 +1,16 @@
+Issue: Duplicate header on User Management page
+
+Looking at the screenshot:
+- First header row: "User Management" | Enter Simulation Mode | Lock | Employee | CONFIDENTIAL | Bell
+- Second header row: "User Management" | Enter Simulation Mode | Lock | Employee | CONFIDENTIAL | Bell
+
+The issue is that the DashboardLayout already includes a header with the page title and SecurityToolbar.
+But the content area is showing another header with the same elements.
+
+Looking at the code:
+- DashboardLayout line 344-384 has the top header bar with SecurityToolbar
+- The UserManagement page at line 155 wraps content in DashboardLayout
+- The "Access Denied" content is inside DashboardLayout
+
+The duplicate appears to be coming from somewhere else - possibly the App.tsx or another wrapper.
+Need to check if there's a duplicate SecurityToolbar being rendered outside of DashboardLayout.

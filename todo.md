@@ -158,3 +158,11 @@
 - [x] Add role assignment dropdown for each user
 - [x] Link Business Client users to client accounts
 - [x] Add user search and filtering
+
+## Real Product Data Update
+- [ ] Browse matsumatcha.com for product information
+- [ ] Update database with real Matsu Matcha products
+- [ ] Replace sample data with actual product catalog
+
+## Bug Fixes
+- [x] Fix duplicate header/toolbar on User Management page
