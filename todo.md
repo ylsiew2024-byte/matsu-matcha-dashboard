@@ -244,3 +244,12 @@
 - [x] Remove Simulation Mode feature
 - [x] Fix product revert function in Product Catalog (already working)
 - [x] Remove duplicate suppliers in Supplier Management page
+
+
+## Inventory & Orders Enhancement (Jan 31)
+- [x] Add "Add Inventory" button/dialog to Inventory Management page
+- [x] Allow users to add stock for products (quantity, threshold, notes)
+- [x] Generate sample inventory data for all 11 products (315.5 kg total stock)
+- [x] Add "Create Order" button/dialog to Orders page (already existed)
+- [x] Allow users to create new client orders (already existed)
+- [x] Generate sample orders data for clients (14 orders with various statuses)

@@ -423,6 +423,51 @@ export const appRouter = router({
     lowStock: protectedProcedure.query(async () => {
       return db.getLowStockInventory();
     }),
+    addStock: operationsProcedure
+      .input(z.object({
+        skuId: z.number(),
+        quantityKg: z.string(),
+        lowStockThresholdKg: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Check if inventory record exists for this SKU
+        let inv = await db.getInventoryBySkuId(input.skuId);
+        
+        if (!inv) {
+          // Create inventory record if it doesn't exist
+          await db.createInventory({ 
+            skuId: input.skuId,
+            totalStockKg: input.quantityKg,
+            lowStockThresholdKg: input.lowStockThresholdKg || '5',
+          });
+          inv = await db.getInventoryBySkuId(input.skuId);
+        } else {
+          // Update existing inventory
+          const newTotal = Number(inv.totalStockKg || 0) + Number(input.quantityKg);
+          await db.updateInventory(inv.id, { 
+            totalStockKg: newTotal.toString(),
+            lastArrivalDate: new Date(),
+            ...(input.lowStockThresholdKg && { lowStockThresholdKg: input.lowStockThresholdKg }),
+            updatedBy: ctx.user.id,
+          });
+        }
+        
+        // Create transaction record
+        if (inv) {
+          await db.createInventoryTransaction({
+            skuId: input.skuId,
+            inventoryId: inv.id,
+            transactionType: 'purchase',
+            quantityKg: input.quantityKg,
+            notes: input.notes || 'Initial stock added',
+            createdBy: ctx.user.id,
+          });
+        }
+        
+        await logAction(ctx.user.id, ctx.user.name, 'CREATE', 'inventory', inv?.id, null, input);
+        return { success: true };
+      }),
     update: operationsProcedure
       .input(z.object({
         id: z.number(),

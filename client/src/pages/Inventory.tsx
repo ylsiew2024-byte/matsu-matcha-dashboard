@@ -43,6 +43,8 @@ export default function Inventory() {
   const [isTransactionOpen, setIsTransactionOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<any>(null);
   const [transactionType, setTransactionType] = useState<string>("purchase");
+  const [isAddInventoryOpen, setIsAddInventoryOpen] = useState(false);
+  const [selectedSkuForAdd, setSelectedSkuForAdd] = useState<string>("");
   
   const { data: inventory, isLoading } = trpc.inventory.list.useQuery();
   const { data: skus } = trpc.skus.list.useQuery({});
@@ -64,6 +66,20 @@ export default function Inventory() {
     },
   });
 
+  const addStockMutation = trpc.inventory.addStock.useMutation({
+    onSuccess: () => {
+      utils.inventory.list.invalidate();
+      utils.inventory.lowStock.invalidate();
+      utils.inventory.transactions.invalidate();
+      setIsAddInventoryOpen(false);
+      setSelectedSkuForAdd("");
+      toast.success("Inventory added successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const getSkuInfo = (skuId: number) => {
     const sku = skus?.find(s => s.id === skuId);
     if (!sku) return { name: `SKU #${skuId}`, supplier: null };
@@ -78,6 +94,17 @@ export default function Inventory() {
       skuId: selectedInventory.skuId,
       transactionType: transactionType as any,
       quantityKg: formData.get("quantity") as string,
+      notes: formData.get("notes") as string || undefined,
+    });
+  };
+
+  const handleAddInventory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    addStockMutation.mutate({
+      skuId: parseInt(selectedSkuForAdd),
+      quantityKg: formData.get("quantity") as string,
+      lowStockThresholdKg: formData.get("threshold") as string || undefined,
       notes: formData.get("notes") as string || undefined,
     });
   };
@@ -103,6 +130,12 @@ export default function Inventory() {
             Track stock levels, allocations, and movements
           </p>
         </div>
+        {canEdit && (
+          <Button className="gap-2" onClick={() => setIsAddInventoryOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add Inventory
+          </Button>
+        )}
       </div>
 
       {/* Summary Cards */}
@@ -418,6 +451,77 @@ export default function Inventory() {
               </Button>
               <Button type="submit" disabled={transactionMutation.isPending}>
                 {transactionMutation.isPending ? "Recording..." : "Record Transaction"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Inventory Dialog */}
+      <Dialog open={isAddInventoryOpen} onOpenChange={setIsAddInventoryOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Inventory</DialogTitle>
+            <DialogDescription>
+              Add stock for a product
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddInventory}>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="add-sku">Product *</Label>
+                <Select value={selectedSkuForAdd} onValueChange={setSelectedSkuForAdd} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {skus?.map(sku => (
+                      <SelectItem key={sku.id} value={sku.id.toString()}>
+                        {sku.name} ({sku.grade})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-quantity">Quantity (kg) *</Label>
+                <Input
+                  id="add-quantity"
+                  name="quantity"
+                  type="number"
+                  step="0.001"
+                  min="0.001"
+                  required
+                  placeholder="Enter quantity in kg"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-threshold">Low Stock Threshold (kg)</Label>
+                <Input
+                  id="add-threshold"
+                  name="threshold"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  defaultValue="5"
+                  placeholder="Default: 5 kg"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-notes">Notes</Label>
+                <Textarea
+                  id="add-notes"
+                  name="notes"
+                  placeholder="Optional notes about this inventory..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsAddInventoryOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={addStockMutation.isPending || !selectedSkuForAdd}>
+                {addStockMutation.isPending ? "Adding..." : "Add Inventory"}
               </Button>
             </DialogFooter>
           </form>
