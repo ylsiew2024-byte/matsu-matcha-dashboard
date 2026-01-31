@@ -40,7 +40,8 @@ import {
   History,
   TrendingUp,
   AlertTriangle,
-  Brain
+  Brain,
+  UserCog
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -60,6 +61,7 @@ const menuItems = [
   { icon: MessageSquare, label: "AI Assistant", path: "/ai-chat" },
   { icon: History, label: "Audit Log", path: "/audit" },
   { icon: Brain, label: "AI Predictions", path: "/ai-predictions" },
+  { icon: UserCog, label: "User Management", path: "/users" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 

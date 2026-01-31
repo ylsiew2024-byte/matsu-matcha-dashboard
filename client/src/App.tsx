@@ -25,6 +25,7 @@ import AuditLog from "./pages/AuditLog";
 import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
 import AiPredictions from "./pages/AiPredictions";
+import UserManagement from "./pages/UserManagement";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function Router() {
         <Route path="/settings" component={Settings} />
         <Route path="/notifications" component={Notifications} />
         <Route path="/ai-predictions" component={AiPredictions} />
+        <Route path="/users" component={UserManagement} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
