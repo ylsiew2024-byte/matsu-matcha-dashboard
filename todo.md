@@ -129,3 +129,25 @@
 - [x] Add sample inventory data
 - [x] Add sample pricing with margins
 - [x] Add sample orders
+
+## RBAC System Implementation (Completed)
+### Database & Schema
+- [x] Update User model with new role field (super_admin, manager, employee, business_client)
+- [x] Create role permissions mapping table
+
+### Backend Middleware
+- [x] Create role verification middleware/guards
+- [x] Implement Super Admin: unrestricted access, user management, system settings
+- [x] Implement Manager: operational data, financial reports, staff management (no system config)
+- [x] Implement Employee: inventory view/update, orders create/process (no financial, user mgmt, AI)
+- [x] Implement Business Client: view-only dashboard, AI predictions for their account only
+
+### Frontend UI
+- [x] Dynamic sidebar navigation based on role
+- [x] Hide/show buttons and actions based on permissions
+- [x] Role-specific dashboard views
+- [x] AI Prediction route locked to Business Client and Admin only
+
+### Testing
+- [x] Test all role permissions (53 tests passing)
+- [x] Verify API guards work correctly

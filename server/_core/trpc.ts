@@ -27,12 +27,13 @@ const requireUser = t.middleware(async opts => {
 
 export const protectedProcedure = t.procedure.use(requireUser);
 
-export const adminProcedure = t.procedure.use(
+// Super Admin only procedure
+export const superAdminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    if (!ctx.user || ctx.user.role !== 'admin') {
-      throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
+    if (!ctx.user || ctx.user.role !== 'super_admin') {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Super Admin access required" });
     }
 
     return next({
@@ -43,3 +44,42 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+// Manager or higher procedure (super_admin, manager)
+export const managerProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !['super_admin', 'manager'].includes(ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Manager access required" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);
+
+// Employee or higher procedure (super_admin, manager, employee)
+export const employeeProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !['super_admin', 'manager', 'employee'].includes(ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Employee access required" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);
+
+// Legacy alias for backward compatibility
+export const adminProcedure = superAdminProcedure;

@@ -11,11 +11,63 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
-import { AlertTriangle, Download, Shield } from "lucide-react";
+import { useState, createContext, useContext, useCallback, ReactNode } from "react";
+import { AlertTriangle, Download } from "lucide-react";
+
+// Export confirmation context
+interface ExportContextType {
+  showExportConfirmation: boolean;
+  triggerExport: (action: () => void) => boolean;
+  confirmExport: () => void;
+  cancelExport: () => void;
+}
+
+const ExportContext = createContext<ExportContextType | null>(null);
+
+export function ExportProvider({ children }: { children: ReactNode }) {
+  const { hasPermission } = useSecurity();
+  const [showExportConfirmation, setShowExportConfirmation] = useState(false);
+  const [pendingExportAction, setPendingExportAction] = useState<(() => void) | null>(null);
+
+  const triggerExport = useCallback((action: () => void) => {
+    if (!hasPermission('canExportData')) {
+      return false;
+    }
+    setPendingExportAction(() => action);
+    setShowExportConfirmation(true);
+    return true;
+  }, [hasPermission]);
+
+  const confirmExport = useCallback(() => {
+    if (pendingExportAction) {
+      pendingExportAction();
+    }
+    setShowExportConfirmation(false);
+    setPendingExportAction(null);
+  }, [pendingExportAction]);
+
+  const cancelExport = useCallback(() => {
+    setShowExportConfirmation(false);
+    setPendingExportAction(null);
+  }, []);
+
+  return (
+    <ExportContext.Provider value={{ showExportConfirmation, triggerExport, confirmExport, cancelExport }}>
+      {children}
+    </ExportContext.Provider>
+  );
+}
+
+export function useExport() {
+  const context = useContext(ExportContext);
+  if (!context) {
+    throw new Error("useExport must be used within an ExportProvider");
+  }
+  return context;
+}
 
 export function ExportConfirmDialog() {
-  const { showExportConfirmation, confirmExport, cancelExport } = useSecurity();
+  const { showExportConfirmation, confirmExport, cancelExport } = useExport();
   const { user } = useAuth();
   const [acknowledged, setAcknowledged] = useState(false);
   
@@ -95,17 +147,7 @@ export function ExportConfirmDialog() {
 
 // Hook to trigger export with confirmation
 export function useSecureExport() {
-  const { setShowExportConfirmation, setPendingExportAction, hasPermission } = useSecurity();
-  
-  const triggerExport = (exportAction: () => void) => {
-    if (!hasPermission('canExportData')) {
-      return false;
-    }
-    setPendingExportAction(() => exportAction);
-    setShowExportConfirmation(true);
-    return true;
-  };
-  
+  const { triggerExport } = useExport();
   return { triggerExport };
 }
 

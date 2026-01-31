@@ -7,47 +7,44 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { 
   Lock, 
   Shield, 
   Clock, 
-  User, 
-  AlertTriangle,
-  Eye,
-  EyeOff,
-  FlaskConical,
-  LogOut,
 } from "lucide-react";
 import { EnterSimulationButton } from "./SimulationModeBanner";
+
+const SESSION_TIMEOUT_MINUTES = 30;
 
 export function SecurityToolbar() {
   const { 
     activatePanicMode, 
-    getUserRole, 
-    sessionTimeoutMinutes,
+    currentRole,
     lastActivity,
     isSimulationMode,
   } = useSecurity();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   
-  const role = getUserRole();
   const minutesSinceActivity = Math.floor((Date.now() - lastActivity) / 1000 / 60);
-  const minutesRemaining = Math.max(0, sessionTimeoutMinutes - minutesSinceActivity);
+  const minutesRemaining = Math.max(0, SESSION_TIMEOUT_MINUTES - minutesSinceActivity);
   
   const getRoleBadgeColor = () => {
-    switch (role) {
-      case 'admin': return 'bg-red-500/10 text-red-500 border-red-500/30';
-      case 'finance': return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
-      case 'operations': return 'bg-green-500/10 text-green-500 border-green-500/30';
+    switch (currentRole) {
+      case 'super_admin': return 'bg-red-500/10 text-red-500 border-red-500/30';
+      case 'manager': return 'bg-blue-500/10 text-blue-500 border-blue-500/30';
+      case 'employee': return 'bg-green-500/10 text-green-500 border-green-500/30';
+      case 'business_client': return 'bg-purple-500/10 text-purple-500 border-purple-500/30';
       default: return 'bg-gray-500/10 text-gray-500 border-gray-500/30';
+    }
+  };
+
+  const getRoleDisplayName = () => {
+    switch (currentRole) {
+      case 'super_admin': return 'Super Admin';
+      case 'manager': return 'Manager';
+      case 'employee': return 'Employee';
+      case 'business_client': return 'Business Client';
+      default: return currentRole;
     }
   };
   
@@ -92,7 +89,7 @@ export function SecurityToolbar() {
       {/* Role badge */}
       <Badge variant="outline" className={getRoleBadgeColor()}>
         <Shield className="h-3 w-3 mr-1" />
-        {role.replace('_', ' ')}
+        {getRoleDisplayName()}
       </Badge>
     </div>
   );
@@ -100,8 +97,7 @@ export function SecurityToolbar() {
 
 // Compact version for mobile/sidebar
 export function SecurityToolbarCompact() {
-  const { activatePanicMode, getUserRole } = useSecurity();
-  const role = getUserRole();
+  const { activatePanicMode, currentRole } = useSecurity();
   
   return (
     <div className="flex items-center gap-1">

@@ -15,6 +15,13 @@
       "when": 1769828265919,
       "tag": "0001_amazing_justin_hammer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769832502939,
+      "tag": "0002_blushing_dagger",
+      "breakpoints": true
     }
   ]
 }

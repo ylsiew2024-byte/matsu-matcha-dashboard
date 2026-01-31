@@ -23,7 +23,7 @@ import { Plus, Pencil, Trash2, Truck, MapPin, Mail, Phone, Search, Clock } from 
 export default function Suppliers() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
-  const canEdit = user?.role === 'admin' || user?.role === 'operations';
+  const canEdit = user?.role === 'super_admin' || user?.role === 'manager';
   
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);

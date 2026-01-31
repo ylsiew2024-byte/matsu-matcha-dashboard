@@ -4,13 +4,22 @@ import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean,
 // USER & AUTHENTICATION
 // ============================================
 
+/**
+ * User roles with hierarchical permissions:
+ * - super_admin: Unrestricted access to everything. Can manage users, system settings, delete any record.
+ * - manager: Access to operational data, financial reports, staff management. Cannot change system-wide configurations.
+ * - employee: Restricted operational access - inventory view/update, orders create/process. No financial data, user management, or AI analytics.
+ * - business_client: External client with view-only dashboard access. Can see AI Usage Predictions and analytics for their account only.
+ */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["admin", "operations", "finance", "view_only"]).default("view_only").notNull(),
+  role: mysqlEnum("role", ["super_admin", "manager", "employee", "business_client"]).default("employee").notNull(),
+  // For business_client: link to their client account for scoped data access
+  linkedClientId: int("linkedClientId"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),

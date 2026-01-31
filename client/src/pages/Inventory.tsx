@@ -38,7 +38,7 @@ import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown } from "luc
 export default function Inventory() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
-  const canEdit = user?.role === 'admin' || user?.role === 'operations';
+  const canEdit = user?.role === 'super_admin' || user?.role === 'manager' || user?.role === 'employee';
   
   const [isTransactionOpen, setIsTransactionOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<any>(null);

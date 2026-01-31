@@ -9,26 +9,50 @@ import * as db from "./db";
 import { nanoid } from "nanoid";
 
 // Role-based access control middleware
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+// Super Admin: Unrestricted access
+const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'super_admin') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Super Admin access required' });
   }
   return next({ ctx });
 });
 
-const operationsProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (!['admin', 'operations'].includes(ctx.user.role)) {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Operations access required' });
+// Manager: Operational data, financial reports, staff management
+const managerProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (!['super_admin', 'manager'].includes(ctx.user.role)) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Manager access required' });
   }
   return next({ ctx });
 });
 
-const financeProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (!['admin', 'finance'].includes(ctx.user.role)) {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Finance access required' });
+// Employee: Inventory view/update, orders create/process
+const employeeProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (!['super_admin', 'manager', 'employee'].includes(ctx.user.role)) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Employee access required' });
   }
   return next({ ctx });
 });
+
+// Business Client: View-only, AI predictions for their account
+const businessClientProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'business_client') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Business Client access required' });
+  }
+  return next({ ctx });
+});
+
+// AI Predictions: Super Admin and Business Client only
+const aiPredictionsProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (!['super_admin', 'business_client'].includes(ctx.user.role)) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'AI Predictions access restricted to Super Admin and Business Client' });
+  }
+  return next({ ctx });
+});
+
+// Legacy aliases for backward compatibility
+const adminProcedure = superAdminProcedure;
+const operationsProcedure = employeeProcedure;
+const financeProcedure = managerProcedure;
 
 // Helper to create audit log
 async function logAction(
@@ -94,11 +118,12 @@ export const appRouter = router({
     updateRole: adminProcedure
       .input(z.object({
         userId: z.number(),
-        role: z.enum(['admin', 'operations', 'finance', 'view_only']),
+        role: z.enum(['super_admin', 'manager', 'employee', 'business_client']),
+        linkedClientId: z.number().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        await db.updateUserRole(input.userId, input.role);
-        await logAction(ctx.user.id, ctx.user.name, 'UPDATE_ROLE', 'user', input.userId, null, { role: input.role });
+        await db.updateUserRole(input.userId, input.role, input.linkedClientId);
+        await logAction(ctx.user.id, ctx.user.name, 'UPDATE_ROLE', 'user', input.userId, null, { role: input.role, linkedClientId: input.linkedClientId });
         return { success: true };
       }),
   }),

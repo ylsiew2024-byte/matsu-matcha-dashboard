@@ -30,7 +30,7 @@ import { Plus, Pencil, Trash2, Users, Building2, Mail, Phone, Search } from "luc
 export default function Clients() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
-  const canEdit = user?.role === 'admin' || user?.role === 'operations';
+  const canEdit = user?.role === 'super_admin' || user?.role === 'manager';
   
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);

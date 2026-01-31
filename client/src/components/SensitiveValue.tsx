@@ -1,6 +1,6 @@
-import { useSensitiveData, useSecurity } from "@/contexts/SecurityContext";
+import { useSecurity } from "@/contexts/SecurityContext";
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, Lock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SensitiveValueProps {
@@ -20,8 +20,10 @@ export function SensitiveValue({
   prefix = '',
   suffix = '',
 }: SensitiveValueProps) {
-  const { shouldBlur, canView } = useSensitiveData();
-  const { isPanicMode } = useSecurity();
+  const { shouldBlurSensitiveData, isPanicMode, permissions } = useSecurity();
+  
+  const shouldBlur = shouldBlurSensitiveData;
+  const canView = permissions.canViewCosts;
   
   const formatValue = () => {
     if (shouldBlur) {

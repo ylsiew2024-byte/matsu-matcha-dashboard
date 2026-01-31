@@ -36,10 +36,10 @@ vi.mock('./db', () => ({
   getDemandForecasts: vi.fn().mockResolvedValue([]),
   getDataVersions: vi.fn().mockResolvedValue([]),
   getUsers: vi.fn().mockResolvedValue([
-    { id: 1, name: 'Admin User', role: 'admin' },
+    { id: 1, name: 'Admin User', role: 'super_admin' },
   ]),
   getAllUsers: vi.fn().mockResolvedValue([
-    { id: 1, name: 'Admin User', role: 'admin' },
+    { id: 1, name: 'Admin User', role: 'super_admin' },
   ]),
   getDataVersionHistory: vi.fn().mockResolvedValue([]),
   getMonthlyProfitSummary: vi.fn().mockResolvedValue([]),
@@ -78,7 +78,7 @@ function createAdminContext(): TrpcContext {
     email: "admin@matsumatcha.com",
     name: "Admin User",
     loginMethod: "manus",
-    role: "admin",
+    role: "super_admin",
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
@@ -103,7 +103,7 @@ function createOperationsContext(): TrpcContext {
     email: "ops@matsumatcha.com",
     name: "Operations User",
     loginMethod: "manus",
-    role: "operations",
+    role: "manager",
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
@@ -156,7 +156,7 @@ describe("Matsu Matcha B2B Dashboard", () => {
       
       expect(result).toBeDefined();
       expect(result?.name).toBe("Admin User");
-      expect(result?.role).toBe("admin");
+      expect(result?.role).toBe("super_admin");
     });
 
     it("clears session cookie on logout", async () => {

@@ -23,7 +23,7 @@ import {
   Download,
   Lock
 } from "lucide-react";
-import { useSecurity, useSensitiveData } from "@/contexts/SecurityContext";
+import { useSecurity } from "@/contexts/SecurityContext";
 import { useSecureExport } from "@/components/ExportConfirmDialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,9 +45,9 @@ const COLORS = ['#4ade80', '#22c55e', '#16a34a', '#15803d', '#166534', '#14532d'
 
 export default function Analytics() {
   const { hasPermission, isPanicMode } = useSecurity();
-  const { shouldBlur } = useSensitiveData();
   const { triggerExport } = useSecureExport();
   const canViewMargins = hasPermission('canViewMargins');
+  const shouldBlur = isPanicMode || !canViewMargins;
   const canExport = hasPermission('canExportData');
   
   const { data: profitability, isLoading: loadingProfit } = trpc.analytics.skuProfitability.useQuery();

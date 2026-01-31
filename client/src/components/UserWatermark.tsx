@@ -1,8 +1,8 @@
 import { useSecurity } from "@/contexts/SecurityContext";
 
 export function UserWatermark() {
-  const { getWatermarkText } = useSecurity();
-  const watermarkText = getWatermarkText();
+  const { userWatermark } = useSecurity();
+  const watermarkText = userWatermark;
   
   return (
     <>

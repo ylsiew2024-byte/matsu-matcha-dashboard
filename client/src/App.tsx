@@ -8,7 +8,7 @@ import { SecurityProvider } from "./contexts/SecurityContext";
 import DashboardLayout from "./components/DashboardLayout";
 import PanicScreen from "./components/PanicScreen";
 import UserWatermark from "./components/UserWatermark";
-import ExportConfirmDialog from "./components/ExportConfirmDialog";
+import ExportConfirmDialog, { ExportProvider } from "./components/ExportConfirmDialog";
 import SimulationModeBanner from "./components/SimulationModeBanner";
 
 // Pages
@@ -24,6 +24,7 @@ import AiChat from "./pages/AiChat";
 import AuditLog from "./pages/AuditLog";
 import Settings from "./pages/Settings";
 import Notifications from "./pages/Notifications";
+import AiPredictions from "./pages/AiPredictions";
 
 function Router() {
   return (
@@ -41,6 +42,7 @@ function Router() {
         <Route path="/audit" component={AuditLog} />
         <Route path="/settings" component={Settings} />
         <Route path="/notifications" component={Notifications} />
+        <Route path="/ai-predictions" component={AiPredictions} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
@@ -54,6 +56,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <SecurityProvider>
+            <ExportProvider>
             {/* Security overlays */}
             <PanicScreen />
             <UserWatermark />
@@ -63,6 +66,7 @@ function App() {
             {/* Main app */}
             <Toaster />
             <Router />
+            </ExportProvider>
           </SecurityProvider>
         </TooltipProvider>
       </ThemeProvider>

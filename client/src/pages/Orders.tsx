@@ -47,7 +47,7 @@ const statusColors: Record<string, string> = {
 export default function Orders() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
-  const canEdit = user?.role === 'admin' || user?.role === 'operations';
+  const canEdit = user?.role === 'super_admin' || user?.role === 'manager' || user?.role === 'employee';
   
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);

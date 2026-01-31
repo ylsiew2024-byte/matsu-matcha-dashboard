@@ -51,7 +51,7 @@ const entityIcons: Record<string, string> = {
 
 export default function AuditLog() {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'super_admin' || user?.role === 'manager';
   
   const [searchQuery, setSearchQuery] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");

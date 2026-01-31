@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE users SET role = 'super_admin' WHERE role = 'admin';\nUPDATE users SET role = 'manager' WHERE role = 'operations';\nUPDATE users SET role = 'manager' WHERE role = 'finance';\nUPDATE users SET role = 'employee' WHERE role = 'view_only';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute UPDATE users SET role = 'super_admin' WHERE role = 'admin';\nUPDATE users SET role = 'manager' WHERE role = 'operations';\nUPDATE users SET role = 'manager' WHERE role = 'finance';\nUPDATE users SET role = 'employee' WHERE role = 'view_only';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column '%s' at row %d"
+  ]
+}

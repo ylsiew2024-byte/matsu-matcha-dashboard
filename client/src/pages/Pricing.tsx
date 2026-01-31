@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "sonner";
 import { Plus, DollarSign, Calculator, TrendingUp, TrendingDown, Info, Lock } from "lucide-react";
-import { useSecurity, useSensitiveData } from "@/contexts/SecurityContext";
+import { useSecurity } from "@/contexts/SecurityContext";
 import { SensitiveValue, SensitiveDataBadge, RestrictedContent } from "@/components/SensitiveValue";
 import {
   Tooltip,
@@ -45,9 +45,9 @@ export default function Pricing() {
   const { user } = useAuth();
   const utils = trpc.useUtils();
   const { hasPermission, isPanicMode } = useSecurity();
-  const { shouldBlur } = useSensitiveData();
   const canEdit = hasPermission('canEditPricing');
   const canViewCosts = hasPermission('canViewCosts');
+  const shouldBlur = isPanicMode || !canViewCosts;
   const canViewMargins = hasPermission('canViewMargins');
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);

@@ -77,8 +77,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = user.role;
       updateSet.role = user.role;
     } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
+      values.role = 'super_admin';
+      updateSet.role = 'super_admin';
     }
 
     if (!values.lastSignedIn) {
@@ -115,10 +115,16 @@ export async function getAllUsers() {
   return db.select().from(users).orderBy(desc(users.createdAt));
 }
 
-export async function updateUserRole(userId: number, role: "admin" | "operations" | "finance" | "view_only") {
+export async function updateUserRole(userId: number, role: "super_admin" | "manager" | "employee" | "business_client", linkedClientId?: number) {
   const db = await getDb();
   if (!db) return;
-  await db.update(users).set({ role }).where(eq(users.id, userId));
+  const updateData: { role: typeof role; linkedClientId?: number | null } = { role };
+  if (role === 'business_client' && linkedClientId !== undefined) {
+    updateData.linkedClientId = linkedClientId;
+  } else if (role !== 'business_client') {
+    updateData.linkedClientId = null;
+  }
+  await db.update(users).set(updateData).where(eq(users.id, userId));
 }
 
 // ============================================
