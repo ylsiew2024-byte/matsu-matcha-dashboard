@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown, Sparkles, Bot } from "lucide-react";
+import { Package, AlertTriangle, Plus, Minus, RefreshCw, ArrowUpDown, Undo2, Sparkles, Bot } from "lucide-react";
 import { AIAssistant } from "@/components/AIAssistant";
 
 export default function Inventory() {
@@ -44,6 +44,8 @@ export default function Inventory() {
   const [isTransactionOpen, setIsTransactionOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<any>(null);
   const [transactionType, setTransactionType] = useState<string>("purchase");
+  const [isAddInventoryOpen, setIsAddInventoryOpen] = useState(false);
+  const [selectedSkuForAdd, setSelectedSkuForAdd] = useState<string>("");
   
   const { data: inventory, isLoading } = trpc.inventory.list.useQuery();
   const { data: skus } = trpc.skus.list.useQuery({});
@@ -65,6 +67,32 @@ export default function Inventory() {
     },
   });
 
+  const addStockMutation = trpc.inventory.addStock.useMutation({
+    onSuccess: () => {
+      utils.inventory.list.invalidate();
+      utils.inventory.lowStock.invalidate();
+      utils.inventory.transactions.invalidate();
+      setIsAddInventoryOpen(false);
+      setSelectedSkuForAdd("");
+      toast.success("Inventory added successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const revertMutation = trpc.inventory.revertTransaction.useMutation({
+    onSuccess: () => {
+      utils.inventory.list.invalidate();
+      utils.inventory.lowStock.invalidate();
+      utils.inventory.transactions.invalidate();
+      toast.success("Transaction reverted successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const getSkuInfo = (skuId: number) => {
     const sku = skus?.find(s => s.id === skuId);
     if (!sku) return { name: `SKU #${skuId}`, supplier: null };
@@ -79,6 +107,17 @@ export default function Inventory() {
       skuId: selectedInventory.skuId,
       transactionType: transactionType as any,
       quantityKg: formData.get("quantity") as string,
+      notes: formData.get("notes") as string || undefined,
+    });
+  };
+
+  const handleAddInventory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    addStockMutation.mutate({
+      skuId: parseInt(selectedSkuForAdd),
+      quantityKg: formData.get("quantity") as string,
+      lowStockThresholdKg: formData.get("threshold") as string || undefined,
       notes: formData.get("notes") as string || undefined,
     });
   };
@@ -104,6 +143,12 @@ export default function Inventory() {
             Track stock levels, allocations, and movements
           </p>
         </div>
+        {canEdit && (
+          <Button className="gap-2" onClick={() => setIsAddInventoryOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add Inventory
+          </Button>
+        )}
       </div>
 
       {/* Summary Cards */}
@@ -327,6 +372,7 @@ export default function Inventory() {
                   <TableHead>Type</TableHead>
                   <TableHead className="text-right">Quantity</TableHead>
                   <TableHead>Notes</TableHead>
+                  {canEdit && <TableHead className="text-center">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -351,6 +397,20 @@ export default function Inventory() {
                       <TableCell className="text-muted-foreground truncate max-w-[200px]">
                         {tx.notes || '-'}
                       </TableCell>
+                      {canEdit && (
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => revertMutation.mutate({ transactionId: tx.id })}
+                            disabled={revertMutation.isPending}
+                            title="Revert Transaction"
+                          >
+                            <Undo2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}
@@ -425,8 +485,76 @@ export default function Inventory() {
         </DialogContent>
       </Dialog>
 
-      {/* AI Insights Card */}
-      <AIInsightsCard inventory={inventory || []} lowStock={lowStock || []} />
+      {/* Add Inventory Dialog */}
+      <Dialog open={isAddInventoryOpen} onOpenChange={setIsAddInventoryOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Inventory</DialogTitle>
+            <DialogDescription>
+              Add stock for a product
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddInventory}>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="add-sku">Product *</Label>
+                <Select value={selectedSkuForAdd} onValueChange={setSelectedSkuForAdd} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {skus?.map(sku => (
+                      <SelectItem key={sku.id} value={sku.id.toString()}>
+                        {sku.name} ({sku.grade})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-quantity">Quantity (kg) *</Label>
+                <Input
+                  id="add-quantity"
+                  name="quantity"
+                  type="number"
+                  step="0.001"
+                  min="0.001"
+                  required
+                  placeholder="Enter quantity in kg"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-threshold">Low Stock Threshold (kg)</Label>
+                <Input
+                  id="add-threshold"
+                  name="threshold"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  defaultValue="5"
+                  placeholder="Default: 5 kg"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="add-notes">Notes</Label>
+                <Textarea
+                  id="add-notes"
+                  name="notes"
+                  placeholder="Optional notes about this inventory..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsAddInventoryOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={addStockMutation.isPending || !selectedSkuForAdd}>
+                {addStockMutation.isPending ? "Adding..." : "Add Inventory"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* AI Assistant */}
       <AIAssistant 
@@ -440,65 +568,5 @@ export default function Inventory() {
         ]}
       />
     </div>
-  );
-}
-
-// AI Insights Card Component
-function AIInsightsCard({ inventory, lowStock }: { inventory: any[]; lowStock: any[] }) {
-  const [insights, setInsights] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const getInsights = trpc.ai.bulkRecommendations.useMutation({
-    onSuccess: (data) => {
-      setInsights(data.recommendations);
-      setIsLoading(false);
-    },
-    onError: () => {
-      setIsLoading(false);
-    },
-  });
-
-  const handleGetInsights = () => {
-    setIsLoading(true);
-    getInsights.mutate({ type: 'inventory_reorder' });
-  };
-
-  return (
-    <Card className="card-elegant border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Bot className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-base">AI Inventory Insights</CardTitle>
-              <CardDescription>
-                {lowStock.length > 0 
-                  ? `${lowStock.length} items need attention` 
-                  : "Get AI-powered reorder recommendations"}
-              </CardDescription>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleGetInsights}
-            disabled={isLoading}
-            className="gap-1"
-          >
-            <Sparkles className="h-3 w-3" />
-            {isLoading ? "Analyzing..." : "Get Insights"}
-          </Button>
-        </div>
-      </CardHeader>
-      {insights && (
-        <CardContent className="pt-0">
-          <div className="prose prose-sm dark:prose-invert max-w-none bg-muted/50 rounded-lg p-4 max-h-64 overflow-y-auto">
-            <pre className="whitespace-pre-wrap text-xs">{insights}</pre>
-          </div>
-        </CardContent>
-      )}
-    </Card>
   );
 }

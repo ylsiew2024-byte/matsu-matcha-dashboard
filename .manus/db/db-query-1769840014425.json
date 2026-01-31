@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO inventory_transactions (inventoryId, skuId, transactionType, quantityKg, notes, createdAt) \nSELECT i.id, i.skuId, 'purchase', ROUND(10 + RAND() * 20, 2), 'Initial stock from Marukyu Koyamaen', DATE_SUB(NOW(), INTERVAL 30 DAY)\nFROM inventory i\nUNION ALL\nSELECT i.id, i.skuId, 'purchase', ROUND(5 + RAND() * 15, 2), 'Restock shipment', DATE_SUB(NOW(), INTERVAL 14 DAY)\nFROM inventory i\nUNION ALL\nSELECT i.id, i.skuId, 'allocation', ROUND(2 + RAND() * 5, 2), 'Allocated to client order', DATE_SUB(NOW(), INTERVAL 7 DAY)\nFROM inventory i;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute INSERT INTO inventory_transactions (inventoryId, skuId, transactionType, quantityKg, notes, createdAt) \nSELECT i.id, i.skuId, 'purchase', ROUND(10 + RAND() * 20, 2), 'Initial stock from Marukyu Koyamaen', DATE_SUB(NOW(), INTERVAL 30 DAY)\nFROM inventory i\nUNION ALL\nSELECT i.id, i.skuId, 'purchase', ROUND(5 + RAND() * 15, 2), 'Restock shipment', DATE_SUB(NOW(), INTERVAL 14 DAY)\nFROM inventory i\nUNION ALL\nSELECT i.id, i.skuId, 'allocation', ROUND(2 + RAND() * 5, 2), 'Allocated to client order', DATE_SUB(NOW(), INTERVAL 7 DAY)\nFROM inventory i;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1599
+}

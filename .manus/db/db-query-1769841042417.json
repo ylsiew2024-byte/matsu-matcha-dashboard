@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO pricing (skuId, costPriceJpy, exchangeRate, shippingFeePerKg, importTaxRate, landedCostSgd, sellingPricePerKg, isCurrentPrice, createdBy) VALUES\n(34, 18000, 0.0090, 15.00, 0.09, 191.62, 280.00, true, 1),\n(35, 22000, 0.0090, 15.00, 0.09, 230.78, 320.00, true, 1),\n(36, 35000, 0.0090, 15.00, 0.09, 358.15, 480.00, true, 1),\n(37, 38000, 0.0090, 15.00, 0.09, 387.52, 520.00, true, 1),\n(38, 12000, 0.0090, 15.00, 0.09, 132.88, 180.00, true, 1),\n(39, 14000, 0.0090, 15.00, 0.09, 152.46, 200.00, true, 1),\n(40, 11000, 0.0090, 15.00, 0.09, 123.09, 160.00, true, 1),\n(41, 25000, 0.0090, 15.00, 0.09, 260.15, 360.00, true, 1),\n(42, 28000, 0.0090, 15.00, 0.09, 289.52, 400.00, true, 1),\n(43, 32000, 0.0090, 15.00, 0.09, 328.68, 450.00, true, 1),\n(44, 42000, 0.0090, 15.00, 0.09, 426.26, 580.00, true, 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute INSERT INTO pricing (skuId, costPriceJpy, exchangeRate, shippingFeePerKg, importTaxRate, landedCostSgd, sellingPricePerKg, isCurrentPrice, createdBy) VALUES\n(34, 18000, 0.0090, 15.00, 0.09, 191.62, 280.00, true, 1),\n(35, 22000, 0.0090, 15.00, 0.09, 230.78, 320.00, true, 1),\n(36, 35000, 0.0090, 15.00, 0.09, 358.15, 480.00, true, 1),\n(37, 38000, 0.0090, 15.00, 0.09, 387.52, 520.00, true, 1),\n(38, 12000, 0.0090, 15.00, 0.09, 132.88, 180.00, true, 1),\n(39, 14000, 0.0090, 15.00, 0.09, 152.46, 200.00, true, 1),\n(40, 11000, 0.0090, 15.00, 0.09, 123.09, 160.00, true, 1),\n(41, 25000, 0.0090, 15.00, 0.09, 260.15, 360.00, true, 1),\n(42, 28000, 0.0090, 15.00, 0.09, 289.52, 400.00, true, 1),\n(43, 32000, 0.0090, 15.00, 0.09, 328.68, 450.00, true, 1),\n(44, 42000, 0.0090, 15.00, 0.09, 426.26, 580.00, true, 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1531
+}

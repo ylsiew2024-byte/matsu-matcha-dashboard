@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, name, isActive FROM suppliers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT id, name, isActive FROM suppliers;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Marukyu Koyamaen",
+      "isActive": "0"
+    },
+    {
+      "id": "2",
+      "name": "Aiya Matcha",
+      "isActive": "0"
+    },
+    {
+      "id": "3",
+      "name": "Ippodo Tea Co.",
+      "isActive": "0"
+    },
+    {
+      "id": "4",
+      "name": "Kagoshima Green Tea Co.",
+      "isActive": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tisActive\n1\tMarukyu Koyamaen\t0\n2\tAiya Matcha\t0\n3\tIppodo Tea Co.\t0\n4\tKagoshima Green Tea Co.\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1563
+}

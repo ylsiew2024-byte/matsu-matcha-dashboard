@@ -40,7 +40,7 @@ import {
   History,
   TrendingUp,
   AlertTriangle,
-  Brain,
+  // Brain removed - AI Predictions deleted
   UserCog,
   Link2
 } from "lucide-react";
@@ -63,7 +63,7 @@ const menuItems = [
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
   // AI Assistant removed per user request
   { icon: History, label: "Audit Log", path: "/audit" },
-  { icon: Brain, label: "AI Predictions", path: "/ai-predictions" },
+  // AI Predictions removed per user request
   { icon: UserCog, label: "User Management", path: "/users" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

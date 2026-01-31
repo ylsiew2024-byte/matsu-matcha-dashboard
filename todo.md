@@ -160,9 +160,9 @@
 - [x] Add user search and filtering
 
 ## Real Product Data Update
-- [ ] Browse matsumatcha.com for product information
-- [ ] Update database with real Matsu Matcha products
-- [ ] Replace sample data with actual product catalog
+- [x] Browse matsumatcha.com for product information
+- [x] Update database with real Matsu Matcha products
+- [x] Replace sample data with actual product catalog
 
 ## Bug Fixes
 - [x] Fix duplicate header/toolbar on User Management page
@@ -234,3 +234,54 @@
   - [x] Next delivery date for client
   - [x] AI recommendation for higher profitability matcha swaps (same/better quality)
 - [x] Add revert button for each product to restore previous versions
+
+## Updates (Jan 31 - Batch 2)
+- [x] Replace all products with real matsumatcha.com products (grade, price, quality)
+- [x] Add note: Matsu Matcha can edit/improve this engine by interacting with Manus
+- [x] Change Analytics revenue trend to line graph (already implemented)
+- [x] Remove AI Predictions page
+- [x] Remove duplicate clients and products in Pricing page
+- [x] Remove Simulation Mode feature
+- [x] Fix product revert function in Product Catalog (already working)
+- [x] Remove duplicate suppliers in Supplier Management page
+
+
+## Inventory & Orders Enhancement (Jan 31)
+- [x] Add "Add Inventory" button/dialog to Inventory Management page
+- [x] Allow users to add stock for products (quantity, threshold, notes)
+- [x] Generate sample inventory data for all 11 products (315.5 kg total stock)
+- [x] Add "Create Order" button/dialog to Orders page (already existed)
+- [x] Allow users to create new client orders (already existed)
+- [x] Generate sample orders data for clients (14 orders with various statuses)
+
+
+## Bug Fixes & UI Updates (Jan 31 - Batch 3)
+- [x] Delete AI Predictions page from sidebar navigation (already done)
+- [x] Analytics page: Keep line graph for revenue trend
+- [x] Analytics page: Remove supplier distribution chart
+- [x] Analytics page: Remove average margin display
+- [x] Fix product revert function error: "value.toISOString is not a function"
+
+
+## Analytics & UI Fixes (Jan 31 - Batch 4)
+- [x] Remove lock screen feature (removed PanicScreen and lock button)
+- [x] Add pricing data for products (cost price, selling price) to show real margins
+- [x] Fix Top Performing Products showing 0% margin (now shows 27-32% margins)
+- [x] Fix Low Margin Products showing 0% margin (all products now have healthy margins)
+- [x] Fix NaN values in Client Contribution Analysis table (now shows real kg values)
+
+
+## UI Updates (Jan 31 - Batch 5)
+- [x] Remove stats bar (Total Actions, Creates, Updates, Deletes) from Audit Log page
+- [x] Update revenue trend chart to proper line graph with connected dots and black line
+
+
+## Role Permissions Update (Jan 31 - Batch 6)
+- [x] Rename "admin" to "super admin" in role permissions
+- [x] Remove operations, finance, view_only roles
+- [x] Keep only super admin and employee roles
+
+
+## Inventory Permissions Update (Jan 31 - Batch 7)
+- [x] Allow employee role to change stock in inventory (already enabled via employeeProcedure)
+- [x] Add revert button for inventory changes (both employee and super admin)

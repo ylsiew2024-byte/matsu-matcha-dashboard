@@ -104,34 +104,18 @@ export default function Settings() {
           <div className="space-y-4">
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="default">Admin</Badge>
+                <Badge variant="default">Super Admin</Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                Full access to all features including user management, pricing, and system settings.
+                Full access to all features including user management, pricing, analytics, and system settings.
               </p>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary">Operations</Badge>
+                <Badge variant="secondary">Employee</Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                Manage clients, suppliers, products, inventory, and orders. Cannot modify pricing or user roles.
-              </p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">Finance</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                View and manage pricing, costs, and financial analytics. Read-only access to operational data.
-              </p>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">View Only</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Read-only access to all data. Cannot create, update, or delete any records.
+                Manage clients, suppliers, products, inventory, and orders. Limited access to sensitive pricing data.
               </p>
             </div>
           </div>

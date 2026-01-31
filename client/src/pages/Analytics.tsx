@@ -32,19 +32,14 @@ import { Button } from "@/components/ui/button";
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
 
-const COLORS = ['#4ade80', '#22c55e', '#16a34a', '#15803d', '#166534', '#14532d'];
+
 
 export default function Analytics() {
   const { hasPermission, isPanicMode } = useSecurity();
@@ -100,21 +95,7 @@ export default function Analytics() {
       .sort((a, b) => Number(a.profitMargin) - Number(b.profitMargin));
   }, [profitabilityWithMargin]);
 
-  // Supplier distribution data
-  const supplierData = useMemo(() => {
-    if (!suppliers || !skus) return [];
-    const supplierSkuCount: Record<number, { name: string; count: number }> = {};
-    skus.forEach((sku: any) => {
-      if (sku.supplierId) {
-        if (!supplierSkuCount[sku.supplierId]) {
-          const supplier = suppliers.find((s: any) => s.id === sku.supplierId);
-          supplierSkuCount[sku.supplierId] = { name: supplier?.name || `Supplier ${sku.supplierId}`, count: 0 };
-        }
-        supplierSkuCount[sku.supplierId].count++;
-      }
-    });
-    return Object.values(supplierSkuCount).map(s => ({ name: s.name, value: s.count }));
-  }, [suppliers, skus]);
+
 
   const getSkuName = (skuId: number) => {
     return skus?.find(s => s.id === skuId)?.name || `SKU #${skuId}`;
@@ -135,29 +116,7 @@ export default function Analytics() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="card-elegant">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Avg. Margin
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loadingProfit ? (
-              <Skeleton className="h-8 w-20" />
-            ) : (
-              <>
-                <div className="text-2xl font-bold text-primary">
-                  {profitability && profitability.length > 0
-                    ? (profitability.reduce((sum: number, p: any) => sum + Number(p.profitMargin), 0) / profitability.length).toFixed(1)
-                    : 0}%
-                </div>
-                <p className="text-xs text-muted-foreground">across all products</p>
-              </>
-            )}
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-3">
         <Card className="card-elegant">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -196,84 +155,42 @@ export default function Analytics() {
         </Card>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Revenue Trend */}
-        <Card className="card-elegant">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Revenue Trend
-            </CardTitle>
-            <CardDescription>Monthly revenue performance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" className="text-xs" />
-                  <YAxis className="text-xs" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={2}
-                    dot={{ fill: 'hsl(var(--primary))' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Supplier Distribution */}
-        <Card className="card-elegant">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Truck className="h-5 w-5 text-primary" />
-              Supplier Distribution
-            </CardTitle>
-            <CardDescription>Products by supplier</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              {supplierData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={supplierData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {supplierData.map((_: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center text-muted-foreground">
-                  No supplier data available
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Revenue Trend Chart */}
+      <Card className="card-elegant">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Revenue Trend
+          </CardTitle>
+          <CardDescription>Monthly revenue performance</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="month" className="text-xs" />
+                <YAxis className="text-xs" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Line 
+                  type="linear" 
+                  dataKey="revenue" 
+                  stroke="#1a1a1a" 
+                  strokeWidth={2}
+                  dot={{ fill: '#1a1a1a', r: 5, strokeWidth: 0 }}
+                  activeDot={{ fill: '#1a1a1a', r: 6, strokeWidth: 0 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Profitability Analysis */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -416,7 +333,7 @@ export default function Analytics() {
                       <TableCell className="font-medium">{getClientName(client.clientId)}</TableCell>
                       <TableCell className="text-right">{client.orderCount}</TableCell>
                       <TableCell className="text-right font-mono">
-                        {Number(client.totalQuantityKg).toFixed(2)} kg
+                        {client.totalQuantity ? Number(client.totalQuantity).toFixed(2) : '0.00'} kg
                       </TableCell>
                       <TableCell className="text-right font-mono font-medium">
                         SGD {Number(client.totalRevenue).toFixed(2)}

@@ -423,6 +423,51 @@ export const appRouter = router({
     lowStock: protectedProcedure.query(async () => {
       return db.getLowStockInventory();
     }),
+    addStock: operationsProcedure
+      .input(z.object({
+        skuId: z.number(),
+        quantityKg: z.string(),
+        lowStockThresholdKg: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Check if inventory record exists for this SKU
+        let inv = await db.getInventoryBySkuId(input.skuId);
+        
+        if (!inv) {
+          // Create inventory record if it doesn't exist
+          await db.createInventory({ 
+            skuId: input.skuId,
+            totalStockKg: input.quantityKg,
+            lowStockThresholdKg: input.lowStockThresholdKg || '5',
+          });
+          inv = await db.getInventoryBySkuId(input.skuId);
+        } else {
+          // Update existing inventory
+          const newTotal = Number(inv.totalStockKg || 0) + Number(input.quantityKg);
+          await db.updateInventory(inv.id, { 
+            totalStockKg: newTotal.toString(),
+            lastArrivalDate: new Date(),
+            ...(input.lowStockThresholdKg && { lowStockThresholdKg: input.lowStockThresholdKg }),
+            updatedBy: ctx.user.id,
+          });
+        }
+        
+        // Create transaction record
+        if (inv) {
+          await db.createInventoryTransaction({
+            skuId: input.skuId,
+            inventoryId: inv.id,
+            transactionType: 'purchase',
+            quantityKg: input.quantityKg,
+            notes: input.notes || 'Initial stock added',
+            createdBy: ctx.user.id,
+          });
+        }
+        
+        await logAction(ctx.user.id, ctx.user.name, 'CREATE', 'inventory', inv?.id, null, input);
+        return { success: true };
+      }),
     update: operationsProcedure
       .input(z.object({
         id: z.number(),
@@ -486,6 +531,42 @@ export const appRouter = router({
         }
         
         return { id };
+      }),
+    revertTransaction: employeeProcedure
+      .input(z.object({
+        transactionId: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Get the transaction to revert
+        const transactions = await db.getInventoryTransactions(undefined, 1000);
+        const tx = transactions.find(t => t.id === input.transactionId);
+        
+        if (!tx) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Transaction not found' });
+        }
+        
+        const inv = await db.getInventoryBySkuId(tx.skuId);
+        if (!inv) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Inventory not found' });
+        }
+        
+        // Create a reversal transaction
+        const reversalType = ['purchase', 'deallocation'].includes(tx.transactionType) ? 'sale' : 'purchase';
+        const reversalId = await db.createInventoryTransaction({
+          skuId: tx.skuId,
+          inventoryId: inv.id,
+          transactionType: reversalType as any,
+          quantityKg: tx.quantityKg,
+          notes: `Reversal of transaction #${tx.id}: ${tx.notes || tx.transactionType}`,
+          createdBy: ctx.user.id,
+        });
+        
+        await logAction(ctx.user.id, ctx.user.name, 'CREATE', 'inventory_transaction', reversalId, null, {
+          originalTransactionId: tx.id,
+          type: 'reversal',
+        });
+        
+        return { id: reversalId, message: 'Transaction reverted successfully' };
       }),
   }),
 
@@ -669,7 +750,10 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Version not found' });
         }
         
-        const data = JSON.parse(targetVersion.data as string);
+        const rawData = JSON.parse(targetVersion.data as string);
+        
+        // Clean data: remove fields that shouldn't be updated and handle Date conversion
+        const { id, createdAt, updatedAt, createdBy, updatedBy, ...data } = rawData;
         
         // Restore based on entity type
         switch (input.entityType) {

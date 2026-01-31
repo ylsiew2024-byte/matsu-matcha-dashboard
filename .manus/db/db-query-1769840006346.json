@@ -1,0 +1,87 @@
+{
+  "query": "SELECT i.id, m.name, i.totalStockKg, i.allocatedStockKg, i.lowStockThresholdKg FROM inventory i JOIN matcha_skus m ON i.skuId = m.id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user QMx1aKfHx2vYVwk.7e3b1f140a6f --database P6fr6nPkQc7da3BkBBQQhm --execute SELECT i.id, m.name, i.totalStockKg, i.allocatedStockKg, i.lowStockThresholdKg FROM inventory i JOIN matcha_skus m ON i.skuId = m.id;",
+  "rows": [
+    {
+      "id": "34",
+      "name": "Ume 梅",
+      "totalStockKg": "18.300",
+      "allocatedStockKg": "7.440",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "35",
+      "name": "Cho Ro Sui 朝露翠",
+      "totalStockKg": "22.350",
+      "allocatedStockKg": "10.100",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "36",
+      "name": "Saemidori Competition Grade さえみどり",
+      "totalStockKg": "16.840",
+      "allocatedStockKg": "13.190",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "37",
+      "name": "Honzu Asahi Competition Grade 本簾朝日",
+      "totalStockKg": "27.140",
+      "allocatedStockKg": "10.650",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "38",
+      "name": "Suisho 翠初",
+      "totalStockKg": "26.660",
+      "allocatedStockKg": "13.310",
+      "lowStockThresholdKg": "5.000"
+    },
+    {
+      "id": "39",
+      "name": "Ryokuun 緑雲",
+      "totalStockKg": "37.670",
+      "allocatedStockKg": "8.500",
+      "lowStockThresholdKg": "5.000"
+    },
+    {
+      "id": "40",
+      "name": "Seiha 青波",
+      "totalStockKg": "48.370",
+      "allocatedStockKg": "9.560",
+      "lowStockThresholdKg": "5.000"
+    },
+    {
+      "id": "41",
+      "name": "Samidori Kun さみどり薫",
+      "totalStockKg": "32.150",
+      "allocatedStockKg": "9.880",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "42",
+      "name": "Najirushi Premium Ceremonial 名印",
+      "totalStockKg": "29.280",
+      "allocatedStockKg": "12.040",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "43",
+      "name": "Samidori Competition さみどり",
+      "totalStockKg": "34.930",
+      "allocatedStockKg": "5.550",
+      "lowStockThresholdKg": "3.000"
+    },
+    {
+      "id": "44",
+      "name": "Uji Hikari Competition 宇治光",
+      "totalStockKg": "21.840",
+      "allocatedStockKg": "6.660",
+      "lowStockThresholdKg": "3.000"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\ttotalStockKg\tallocatedStockKg\tlowStockThresholdKg\n34\tUme 梅\t18.300\t7.440\t3.000\n35\tCho Ro Sui 朝露翠\t22.350\t10.100\t3.000\n36\tSaemidori Competition Grade さえみどり\t16.840\t13.190\t3.000\n37\tHonzu Asahi Competition Grade 本簾朝日\t27.140\t10.650\t3.000\n38\tSuisho 翠初\t26.660\t13.310\t5.000\n39\tRyokuun 緑雲\t37.670\t8.500\t5.000\n40\tSeiha 青波\t48.370\t9.560\t5.000\n41\tSamidori Kun さみどり薫\t32.150\t9.880\t3.000\n42\tNajirushi Premium Ceremonial 名印\t29.280\t12.040\t3.000\n43\tSamidori Competition さみどり\t34.930\t5.550\t3.000\n44\tUji Hikari Competition 宇治光\t21.840\t6.660\t3.000\n",
+  "stderr": "",
+  "execution_time_ms": 1538
+}
