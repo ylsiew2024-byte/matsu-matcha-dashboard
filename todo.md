@@ -70,3 +70,6 @@
 - [x] Responsive desktop-first design
 - [x] Confidential system warnings
 
+
+## Bug Fixes
+- [x] Fix AI chat functionality

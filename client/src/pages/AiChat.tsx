@@ -65,12 +65,12 @@ export default function AiChat() {
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || sendMutation.isPending) return;
-    sendMutation.mutate({ message: message.trim() });
+    sendMutation.mutate({ message: message.trim(), sessionId });
   };
 
   const handleSuggestedQuestion = (question: string) => {
-    setMessage(question);
-    inputRef.current?.focus();
+    if (sendMutation.isPending) return;
+    sendMutation.mutate({ message: question, sessionId });
   };
 
   return (
